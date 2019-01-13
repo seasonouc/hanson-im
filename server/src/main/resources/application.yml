@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: him-server
+  datasource:
+    url: jdbc:mysql://localhost:3306/chat
+    password: root
+    username: root
+    driver-class-name: com.mysql.jdbc.Driver
+
+server:
+  port: 8081
+
+
+logging:
+  level:
+    root: info
+
+config:
+  userCacheType: local
+  serverId: 123213
+  server:
+    port: 6377
+  netty:
+    workers: 1
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  typeAliasesPackage: com.hanson.im.server.dao
+
+
+
+
