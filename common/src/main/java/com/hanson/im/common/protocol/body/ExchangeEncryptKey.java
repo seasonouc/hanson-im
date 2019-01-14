@@ -1,5 +1,6 @@
 package com.hanson.im.common.protocol.body;
 
+import com.hanson.im.common.cryption.DiffPubKey;
 import com.hanson.im.common.exception.DecodeException;
 import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
@@ -25,6 +26,9 @@ public class ExchangeEncryptKey implements HimSerializer{
      */
     private int version;
 
+
+    private DiffPubKey diffPubKey;
+
     public ExchangeEncryptKey(){
 
     }
@@ -45,6 +49,14 @@ public class ExchangeEncryptKey implements HimSerializer{
         this.version = version;
     }
 
+
+    public DiffPubKey getDiffPubKey() {
+        return diffPubKey;
+    }
+
+    public void setDiffPubKey(DiffPubKey diffPubKey) {
+        this.diffPubKey = diffPubKey;
+    }
 
     @Override
     public void writeTo(ByteBuf byteBuffer) throws EncodeException {

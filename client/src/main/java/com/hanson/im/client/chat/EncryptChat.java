@@ -17,10 +17,22 @@ public class EncryptChat {
     }
 
     /**
-     * build encrypt
+     * build encrypt chat with a group
      * @param userIds
      */
     public void buildGroupEncryptChat(List<String> userIds){
+
+    }
+
+    /**
+     *
+     * @param message
+     */
+    public void sendEncryptText(String message,String userId  ){
+
+    }
+
+    public void sendEncryptPicture(){
 
     }
 }
