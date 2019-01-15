@@ -1,8 +1,7 @@
 package com.hanson.im.client.network.tcp;
 
 import com.hanson.im.client.ClientConfig;
-import com.hanson.im.client.handler.HimClientHandler;
-import com.hanson.im.client.handler.MessageAcceptor;
+import com.hanson.im.client.handler.*;
 import com.hanson.im.common.decode.HimDecoder;
 import com.hanson.im.common.encode.HimEncoder;
 import com.hanson.im.common.protocol.Message;
@@ -25,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
  * @Description:
  */
 @Slf4j
-public class Connector {
+public class Connector implements IMSender,IMReplier{
 
     /**
      * the server port to connect
@@ -58,9 +57,9 @@ public class Connector {
 
         HimClientHandler handler = new HimClientHandler();
 
-        handler.setImReceiver((message)->{
-            new MessageAcceptor().accept(message);
-        });
+        IMReceiver imReceiver = new MessageAcceptor();
+
+        handler.setImReceiver(imReceiver);
 
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
@@ -108,5 +107,17 @@ public class Connector {
 
         ChannelFuture future = channel.writeAndFlush(message);
         return future;
+    }
+
+    @Override
+    public CompletableFuture<Void> send(Message message) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        channel.writeAndFlush(message).addListener(channel->future.complete(null));
+        return future;
+    }
+
+    @Override
+    public CompletableFuture reply(Message message) {
+        return send(message);
     }
 }

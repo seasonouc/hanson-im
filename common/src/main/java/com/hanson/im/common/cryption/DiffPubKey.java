@@ -50,7 +50,7 @@ public class DiffPubKey implements HimSerializer{
     }
 
     @Override
-    public void writeTo(ByteBuf byteBuffer) throws EncodeException {
+    public void writeTo(ByteBuf byteBuffer)  {
         byte[] bytesP =  p.toByteArray();
         byteBuffer.writeInt(bytesP.length);
         byteBuffer.writeBytes(bytesP);
@@ -61,8 +61,16 @@ public class DiffPubKey implements HimSerializer{
     }
 
     @Override
-    public void readFrom(ByteBuf byteBuffer) throws DecodeException {
+    public void readFrom(ByteBuf byteBuffer)  {
+        int pLength = byteBuffer.readInt();
+        byte[] pBytes = new byte[pLength];
+        byteBuffer.readBytes(pBytes,0,pLength);
+        p = new BigInteger(pBytes);
 
+        int gLength = byteBuffer.readInt();
+        byte[] gBytes = new byte[gLength];
+        byteBuffer.readBytes(gBytes,0,gLength);
+        g = new BigInteger(gBytes);
     }
 
 }

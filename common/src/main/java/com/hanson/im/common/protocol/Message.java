@@ -57,6 +57,5 @@ public class Message implements HimSerializer{
 
         body = new MessageBody();
         body.readFrom(byteBuffer);
-
     }
 }

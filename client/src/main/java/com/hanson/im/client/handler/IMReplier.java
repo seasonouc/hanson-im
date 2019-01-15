@@ -6,13 +6,15 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * @author hanson
- * @Date 2019/1/13
+ * @Date 2019/1/15
  * @Description:
  */
-public interface IMSender {
+public interface IMReplier {
+
     /**
-     * use it to send message
+     * to reply message
      * @param message
+     * @return
      */
-    CompletableFuture send(Message message);
+    CompletableFuture reply(Message message);
 }

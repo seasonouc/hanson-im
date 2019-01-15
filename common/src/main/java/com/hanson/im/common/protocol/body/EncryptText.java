@@ -29,7 +29,7 @@ public class EncryptText implements HimSerializer {
         this.text = text;
     }
 
-    public EncryptText(){
+    public EncryptText() {
 
     }
 

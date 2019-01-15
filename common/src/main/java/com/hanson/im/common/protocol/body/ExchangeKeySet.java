@@ -1,7 +1,5 @@
 package com.hanson.im.common.protocol.body;
 
-import com.hanson.im.common.exception.DecodeException;
-import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
 import io.netty.buffer.ByteBuf;
 
@@ -32,7 +30,7 @@ public class ExchangeKeySet implements HimSerializer {
     }
 
     @Override
-    public void writeTo(ByteBuf byteBuffer) throws EncodeException {
+    public void writeTo(ByteBuf byteBuffer) {
         byteBuffer.writeInt(exChangeKeyCache.size());
         for (Map.Entry<BigInteger, Set<String>> entry : exChangeKeyCache.entrySet()) {
             byte[] keyBytes = entry.getKey().toByteArray();
@@ -48,7 +46,7 @@ public class ExchangeKeySet implements HimSerializer {
     }
 
     @Override
-    public void readFrom(ByteBuf byteBuffer) throws DecodeException {
+    public void readFrom(ByteBuf byteBuffer)  {
         exChangeKeyCache = new HashMap<>();
         int mapSize = byteBuffer.readInt();
         for (int i = 0; i < mapSize; i++) {

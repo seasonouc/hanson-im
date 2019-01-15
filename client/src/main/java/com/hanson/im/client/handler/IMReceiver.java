@@ -7,7 +7,7 @@ import com.hanson.im.common.protocol.Message;
  * @Date 2019/1/12
  * @Description:
  */
-public interface IMReceiver {
+public interface IMReceiver{
 
     void receive(Message message);
 }

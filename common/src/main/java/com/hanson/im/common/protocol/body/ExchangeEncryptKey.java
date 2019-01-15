@@ -1,44 +1,56 @@
 package com.hanson.im.common.protocol.body;
 
 import com.hanson.im.common.cryption.DiffPubKey;
-import com.hanson.im.common.exception.DecodeException;
-import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
+import com.hanson.im.common.protocol.util.WriterUtil;
 import io.netty.buffer.ByteBuf;
 
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author hanson
  * @Date 2019/1/12
  * @Description:
  */
-public class ExchangeEncryptKey implements HimSerializer{
+public class ExchangeEncryptKey implements HimSerializer {
 
-    /**
-     * diff-hellman exchange key
-     */
-    private BigInteger exchangeKey;
 
     /**
      * the encrypt version
      */
     private int version;
 
+    /**
+     * session Id
+     */
+    private String sessionId;
 
+    /**
+     * the collection of exchange keys
+     */
+    private List<ExchangeKeySet> exchangeKeySetList;
+
+    /**
+     * the public key generate by the chat creator
+     */
     private DiffPubKey diffPubKey;
 
-    public ExchangeEncryptKey(){
+
+    private Set<String> joinSet;
+
+    public ExchangeEncryptKey() {
 
     }
 
-    public BigInteger getExchangeKey() {
-        return exchangeKey;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public void setExchangeKey(BigInteger exchangeKey) {
-        this.exchangeKey = exchangeKey;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public int getVersion() {
@@ -58,18 +70,43 @@ public class ExchangeEncryptKey implements HimSerializer{
         this.diffPubKey = diffPubKey;
     }
 
-    @Override
-    public void writeTo(ByteBuf byteBuffer) throws EncodeException {
-        byte[] keyBytes = exchangeKey.toByteArray();
-        byteBuffer.writeInt(keyBytes.length);
-        byteBuffer.writeBytes(keyBytes);
+    public List<ExchangeKeySet> getExchangeKeySetList() {
+        return exchangeKeySetList;
+    }
+
+    public void setExchangeKeySetList(List<ExchangeKeySet> exchangeKeySetList) {
+        this.exchangeKeySetList = exchangeKeySetList;
+    }
+
+    public Set<String> getJoinSet() {
+        return joinSet;
+    }
+
+    public void setJoinSet(Set<String> joinSet) {
+        this.joinSet = joinSet;
     }
 
     @Override
-    public void readFrom(ByteBuf byteBuffer) throws DecodeException {
+    public void writeTo(ByteBuf byteBuffer) {
+        WriterUtil.writeString(sessionId, byteBuffer);
+        WriterUtil.writeListString(new ArrayList<>(joinSet), byteBuffer);
+
+        diffPubKey.writeTo(byteBuffer);
+        byteBuffer.writeInt(exchangeKeySetList.size());
+        exchangeKeySetList.forEach(key -> key.writeTo(byteBuffer));
+    }
+
+    @Override
+    public void readFrom(ByteBuf byteBuffer) {
+        sessionId = WriterUtil.readString(byteBuffer);
+        joinSet = new HashSet<>(WriterUtil.readListString(byteBuffer));
+        diffPubKey.readFrom(byteBuffer);
+        exchangeKeySetList = new ArrayList<>();
         int keyLength = byteBuffer.readInt();
-        byte[] keyBytes = new byte[keyLength];
-        byteBuffer.readBytes(keyBytes,0,keyLength);
-        exchangeKey = new BigInteger(keyBytes);
+        for (int i = 0; i < keyLength; i++) {
+            ExchangeKeySet exchangeKeySet = new ExchangeKeySet();
+            exchangeKeySet.readFrom(byteBuffer);
+            exchangeKeySetList.add(exchangeKeySet);
+        }
     }
 }
