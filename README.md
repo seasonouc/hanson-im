@@ -24,7 +24,7 @@ The whole project is built on Diffie-Hellam algorithm.
 
 [the article about the Diffie-Hellman protocol]: http://cs.indstate.edu/~skallam/doc.pdf
 
-![pic](book\pic.png)
+[](/book/pic.png)
 
 
 why I name it hanson,because my name is hanson
