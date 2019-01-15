@@ -22,9 +22,9 @@ The whole project is built on Diffie-Hellam algorithm.
 
 ***So,what is Diffie-Hellman algorithm?***
 
-[the article about the Diffie-Hellman protocol]: http://cs.indstate.edu/~skallam/doc.pdf
+[the article about the Diffie-Hellman protocol](http://cs.indstate.edu/~skallam/doc.pdf )
 
-[](/book/pic.png)
+![](/book/pic.png)
 
 
 why I name it hanson,because my name is hanson
