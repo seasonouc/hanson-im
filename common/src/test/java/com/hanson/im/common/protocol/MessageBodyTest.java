@@ -1,11 +1,8 @@
 package com.hanson.im.common.protocol;
 
-import com.hanson.im.common.decode.HimDecoder;
 import com.hanson.im.common.exception.DecodeException;
 import com.hanson.im.common.exception.EncodeException;
-import com.hanson.im.common.layer.HimSerializer;
-import com.hanson.im.common.protocol.body.LoginRequest;
-import com.hanson.im.common.protocol.body.NormalResponse;
+import com.hanson.im.common.protocol.body.ServerResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.testng.Assert;
@@ -21,8 +18,8 @@ public class MessageBodyTest {
     @Test
     public void testWriteAndRead() throws ClassNotFoundException {
         MessageBody body = new MessageBody();
-        NormalResponse response = new NormalResponse(404,"login success!");
-        body.setData(response,NormalResponse.class);
+        ServerResponse response = new ServerResponse(404,"login success!");
+        body.setData(response,ServerResponse.class);
         ByteBuf byteBuf = Unpooled.buffer(2048);
 
         try {
@@ -38,8 +35,8 @@ public class MessageBodyTest {
         } catch (DecodeException e) {
             e.printStackTrace();
         }
-        Assert.assertEquals(((NormalResponse)body.getData()).getCode(),((NormalResponse)bodyRead.getData()).getCode());
-        Assert.assertEquals(((NormalResponse)body.getData()).getContent(),((NormalResponse)bodyRead.getData()).getContent());
+        Assert.assertEquals(((ServerResponse)body.getData()).getCode(),((ServerResponse)bodyRead.getData()).getCode());
+        Assert.assertEquals(((ServerResponse)body.getData()).getContent(),((ServerResponse)bodyRead.getData()).getContent());
     }
 
 }

@@ -39,6 +39,9 @@ public class ExchangeEncryptKey implements HimSerializer {
     private DiffPubKey diffPubKey;
 
 
+    /**
+     * the group set
+     */
     private Set<String> joinSet;
 
     public ExchangeEncryptKey() {
@@ -100,6 +103,7 @@ public class ExchangeEncryptKey implements HimSerializer {
     public void readFrom(ByteBuf byteBuffer) {
         sessionId = WriterUtil.readString(byteBuffer);
         joinSet = new HashSet<>(WriterUtil.readListString(byteBuffer));
+        diffPubKey = new DiffPubKey();
         diffPubKey.readFrom(byteBuffer);
         exchangeKeySetList = new ArrayList<>();
         int keyLength = byteBuffer.readInt();

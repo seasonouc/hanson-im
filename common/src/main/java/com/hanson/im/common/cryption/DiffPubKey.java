@@ -1,8 +1,7 @@
 package com.hanson.im.common.cryption;
 
-import com.hanson.im.common.exception.DecodeException;
-import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
+import com.hanson.im.common.protocol.util.WriterUtil;
 import io.netty.buffer.ByteBuf;
 
 import java.math.BigInteger;
@@ -14,7 +13,7 @@ import java.util.Random;
  * @Date 2019/1/14
  * @Description:
  */
-public class DiffPubKey implements HimSerializer{
+public class DiffPubKey implements HimSerializer {
 
     /**
      * g is the big integer according to the diff-hellman protocol
@@ -26,10 +25,10 @@ public class DiffPubKey implements HimSerializer{
      */
     private BigInteger p;
 
-    public DiffPubKey(){
+    public DiffPubKey() {
         Random random = new SecureRandom();
-        g = new BigInteger(256,random);
-        p = new BigInteger(512,512,random);
+        g = new BigInteger(256, random);
+        p = new BigInteger(512, 512, random);
     }
 
 
@@ -50,27 +49,15 @@ public class DiffPubKey implements HimSerializer{
     }
 
     @Override
-    public void writeTo(ByteBuf byteBuffer)  {
-        byte[] bytesP =  p.toByteArray();
-        byteBuffer.writeInt(bytesP.length);
-        byteBuffer.writeBytes(bytesP);
-
-        byte[] bytesG =  g.toByteArray();
-        byteBuffer.writeInt(bytesG.length);
-        byteBuffer.writeBytes(bytesG);
+    public void writeTo(ByteBuf byteBuffer) {
+        WriterUtil.writeBigInt(p, byteBuffer);
+        WriterUtil.writeBigInt(g, byteBuffer);
     }
 
     @Override
-    public void readFrom(ByteBuf byteBuffer)  {
-        int pLength = byteBuffer.readInt();
-        byte[] pBytes = new byte[pLength];
-        byteBuffer.readBytes(pBytes,0,pLength);
-        p = new BigInteger(pBytes);
-
-        int gLength = byteBuffer.readInt();
-        byte[] gBytes = new byte[gLength];
-        byteBuffer.readBytes(gBytes,0,gLength);
-        g = new BigInteger(gBytes);
+    public void readFrom(ByteBuf byteBuffer) {
+        p = WriterUtil.readBigInt(byteBuffer);
+        g = WriterUtil.readBigInt(byteBuffer);
     }
 
 }

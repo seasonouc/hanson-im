@@ -3,6 +3,7 @@ package com.hanson.im.common.protocol;
 import com.hanson.im.common.exception.DecodeException;
 import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
+import com.hanson.im.common.protocol.util.WriterUtil;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
@@ -74,29 +75,8 @@ public class MessageHeader implements HimSerializer {
             throw new EncodeException("message sender is null");
         }
 
-        byte[] fromByte = from.getBytes();
-        byteBuffer.writeInt(fromByte.length);
-        byteBuffer.writeBytes(fromByte);
-
-        if (toList == null || toList.size() == 0) {
-            byteBuffer.writeInt(0);
-            return;
-        }
-
-        byteBuffer.writeInt(toList.size());
-        for (String str : toList) {
-            if (str == null || str.length() == 0) {
-                throw new EncodeException("some message receiver is null");
-            }
-
-            byte[] bytes = str.getBytes();
-            byteBuffer.writeInt(bytes.length);
-            byteBuffer.writeBytes(bytes);
-
-
-        }
-
-
+        WriterUtil.writeString(from,byteBuffer);
+        WriterUtil.writeListString(toList,byteBuffer);
     }
 
     @Override
@@ -108,25 +88,8 @@ public class MessageHeader implements HimSerializer {
         }
         messageType = MessageType.values()[messageTypeOrder];
 
-        int fromLength = byteBuffer.readInt();
-        byte[] fromByte = new byte[fromLength];
-        byteBuffer.readBytes(fromByte, 0, fromLength);
+        from = WriterUtil.readString(byteBuffer);
+        toList = WriterUtil.readListString(byteBuffer);
 
-        from = new String(fromByte);
-
-        int toListLength = byteBuffer.readInt();
-        if (toListLength < 0 || toListLength >= 20) {
-            throw new DecodeException("the receiver list is illegal");
-        }
-        toList = new ArrayList<>(toListLength);
-
-        for (int i = 0; i < toListLength; i++) {
-            int toLength = byteBuffer.readInt();
-            byte[] toByte = new byte[toLength];
-            byteBuffer.readBytes(toByte, 0, toLength);
-            String to = new String(toByte);
-            toList.add(to);
-
-        }
     }
 }

@@ -3,6 +3,7 @@ package com.hanson.im.common.protocol.body;
 import com.hanson.im.common.exception.DecodeException;
 import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
+import com.hanson.im.common.protocol.util.WriterUtil;
 import io.netty.buffer.ByteBuf;
 
 /**
@@ -43,29 +44,14 @@ public class LoginRequest implements HimSerializer {
 
     @Override
     public void writeTo(ByteBuf byteBuffer) throws EncodeException {
-        byte[] idBytes = userId.getBytes();
-        byteBuffer.writeInt(idBytes.length);
-        byteBuffer.writeBytes(idBytes);
-
-        byte[] nameBytes = userId.getBytes();
-        byteBuffer.writeInt(nameBytes.length);
-        byteBuffer.writeBytes(nameBytes);
-
-
+        WriterUtil.writeString(userId,byteBuffer);
+        WriterUtil.writeString(userName,byteBuffer);
     }
 
     @Override
     public void readFrom(ByteBuf byteBuffer) throws DecodeException {
-        int idLength = byteBuffer.readInt();
-        byte[] idBytes = new byte[idLength];
-        byteBuffer.readBytes(idBytes, 0, idLength);
-
-        userId = new String(idBytes);
-
-        int nameLength = byteBuffer.readInt();
-        byte[] nameBytes = new byte[nameLength];
-        byteBuffer.readBytes(nameBytes, 0, nameLength);
-        userName = new String(nameBytes);
+        userId = WriterUtil.readString(byteBuffer);
+        userName = WriterUtil.readString(byteBuffer);
 
     }
 }

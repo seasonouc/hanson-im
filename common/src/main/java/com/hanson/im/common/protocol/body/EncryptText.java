@@ -3,6 +3,7 @@ package com.hanson.im.common.protocol.body;
 import com.hanson.im.common.exception.DecodeException;
 import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
+import com.hanson.im.common.protocol.util.WriterUtil;
 import io.netty.buffer.ByteBuf;
 
 /**
@@ -21,6 +22,16 @@ public class EncryptText implements HimSerializer {
      */
     private int version;
 
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    private String sessionId;
+
     public String getText() {
         return text;
     }
@@ -34,24 +45,15 @@ public class EncryptText implements HimSerializer {
     }
 
     @Override
-    public void writeTo(ByteBuf byteBuffer) throws EncodeException {
-        if (text == null) {
-            byteBuffer.writeInt(0);
-        } else {
-
-            byte[] textBytes = text.getBytes();
-            byteBuffer.writeInt(textBytes.length);
-
-        }
+    public void writeTo(ByteBuf byteBuffer)  {
+        WriterUtil.writeString(sessionId,byteBuffer);
+        WriterUtil.writeString(text,byteBuffer);
     }
 
     @Override
-    public void readFrom(ByteBuf byteBuffer) throws DecodeException {
-        int textLength = byteBuffer.readInt();
-        byte[] textBytes = new byte[textLength];
-        byteBuffer.readBytes(textBytes, 0, textLength);
-
-        text = new String(textBytes);
+    public void readFrom(ByteBuf byteBuffer) {
+        sessionId = WriterUtil.readString(byteBuffer);
+        text = WriterUtil.readString(byteBuffer);
 
     }
 }

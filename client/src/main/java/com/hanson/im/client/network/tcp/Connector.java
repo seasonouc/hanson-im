@@ -1,7 +1,11 @@
 package com.hanson.im.client.network.tcp;
 
 import com.hanson.im.client.ClientConfig;
-import com.hanson.im.client.handler.*;
+import com.hanson.im.client.handler.HimClientHandler;
+import com.hanson.im.client.handler.IMReceiver;
+import com.hanson.im.client.handler.IMSender;
+import com.hanson.im.client.handler.MessageAcceptor;
+import com.hanson.im.common.cryption.Cryptor;
 import com.hanson.im.common.decode.HimDecoder;
 import com.hanson.im.common.encode.HimEncoder;
 import com.hanson.im.common.protocol.Message;
@@ -15,6 +19,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -24,17 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * @Description:
  */
 @Slf4j
-public class Connector implements IMSender,IMReplier{
-
-    /**
-     * the server port to connect
-     */
-    private int port;
-
-    /**
-     * the server address
-     */
-    private String ip;
+public class Connector implements IMSender{
 
     /**
      * nio event loop grouop
@@ -43,22 +40,22 @@ public class Connector implements IMSender,IMReplier{
 
     private Channel channel;
 
-    public Connector setAddress(String ip,int port){
-        this.ip = ip;
-        this.port = port;
-        return this;
+    private IMReceiver imReceiver;
+
+    private Map<String, Set<String>> chatCache;
+    private Map<String, Cryptor> cryptorCache;
+
+    public Connector(IMReceiver imReceiver,Map<String, Set<String>> chatCache, Map<String, Cryptor> cryptorCache){
+        this.imReceiver = imReceiver;
+        this.chatCache = chatCache;
+        this.cryptorCache = cryptorCache;
     }
 
-    public CompletableFuture<Boolean> start(){
+    public CompletableFuture<Boolean> start(InetSocketAddress address){
         CompletableFuture<Boolean> future = new CompletableFuture<>();
 
-
         Bootstrap bootstrap = new Bootstrap();
-
         HimClientHandler handler = new HimClientHandler();
-
-        IMReceiver imReceiver = new MessageAcceptor();
-
         handler.setImReceiver(imReceiver);
 
         bootstrap.group(group)
@@ -77,37 +74,19 @@ public class Connector implements IMSender,IMReplier{
 
         ChannelFuture f = null;
         try {
-            f = bootstrap.connect(ip,port).sync();
+            f = bootstrap.connect(address).sync();
             if(f.isSuccess()){
                 this.channel = f.channel();
 
             }
+            future.complete(f.isSuccess());
         } catch (InterruptedException e) {
             e.printStackTrace();
+            future.complete(false);
         }
-
-        future.complete(f.isSuccess());
         return future;
     }
-    public ChannelFuture login(LoginRequest loginRequest){
-        Message message = new Message();
 
-        MessageHeader header = new MessageHeader();
-        header.setVersion(ClientConfig.version);
-        header.setFrom(loginRequest.getUserId());
-        header.setToList(null);
-        header.setMessageType(MessageType.LOGIN_TO);
-
-        message.setHeader(header);
-
-        MessageBody body = new MessageBody();
-        body.setData(loginRequest,LoginRequest.class);
-
-        message.setBody(body);
-
-        ChannelFuture future = channel.writeAndFlush(message);
-        return future;
-    }
 
     @Override
     public CompletableFuture<Void> send(Message message) {
@@ -116,8 +95,4 @@ public class Connector implements IMSender,IMReplier{
         return future;
     }
 
-    @Override
-    public CompletableFuture reply(Message message) {
-        return send(message);
-    }
 }

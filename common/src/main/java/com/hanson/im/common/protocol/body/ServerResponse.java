@@ -3,6 +3,7 @@ package com.hanson.im.common.protocol.body;
 import com.hanson.im.common.exception.DecodeException;
 import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
+import com.hanson.im.common.protocol.util.WriterUtil;
 import io.netty.buffer.ByteBuf;
 
 /**
@@ -10,7 +11,7 @@ import io.netty.buffer.ByteBuf;
  * @Date 2019/1/12
  * @Description:
  */
-public class NormalResponse implements HimSerializer {
+public class ServerResponse implements HimSerializer {
 
     /**
      * the response content
@@ -22,11 +23,11 @@ public class NormalResponse implements HimSerializer {
      */
     private int code;
 
-    public NormalResponse(){
+    public ServerResponse(){
 
     }
 
-    public NormalResponse(int code,String content){
+    public ServerResponse(int code, String content){
         this.code = code;
         this.content = content;
     }
@@ -45,22 +46,14 @@ public class NormalResponse implements HimSerializer {
 
 
     @Override
-    public void writeTo(ByteBuf byteBuffer) throws EncodeException {
+    public void writeTo(ByteBuf byteBuffer)  {
         byteBuffer.writeInt(code);
-
-        byte[] contenByte = content.getBytes();
-        byteBuffer.writeInt(contenByte.length);
-        byteBuffer.writeBytes(contenByte);
-
+        WriterUtil.writeString(content,byteBuffer);
     }
 
     @Override
     public void readFrom(ByteBuf byteBuffer) throws DecodeException {
         code = byteBuffer.readInt();
-
-        int contentLength = byteBuffer.readInt();
-        byte[] bytes = new byte[contentLength];
-        byteBuffer.readBytes(bytes, 0, contentLength);
-        content = new String(bytes );
+        content = WriterUtil.readString(byteBuffer);
     }
 }

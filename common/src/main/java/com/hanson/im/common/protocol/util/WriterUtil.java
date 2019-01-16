@@ -4,6 +4,7 @@ import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
 import io.netty.buffer.ByteBuf;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,10 @@ public class WriterUtil {
     }
 
     public static void writeListString(List<String> list, ByteBuf byteBuf) {
+        if (list == null) {
+            byteBuf.writeInt(0);
+            return;
+        }
         byteBuf.writeInt(list.size());
         list.forEach(str -> writeString(str, byteBuf));
     }
@@ -42,9 +47,22 @@ public class WriterUtil {
         return list;
     }
 
+    public static void writeBigInt(BigInteger b, ByteBuf byteBuf) {
+        byte[] bytesP = b.toByteArray();
+        byteBuf.writeInt(bytesP.length);
+        byteBuf.writeBytes(bytesP);
+    }
+
+    public static BigInteger readBigInt(ByteBuf byteBuf) {
+        int pLength = byteBuf.readInt();
+        byte[] pBytes = new byte[pLength];
+        byteBuf.readBytes(pBytes, 0, pLength);
+        return new BigInteger(pBytes);
+    }
+
     public static <T extends HimSerializer> void writeListObject(List<T> list, ByteBuf byteBuf) throws EncodeException {
         byteBuf.writeInt(list.size());
-        for(T t:list){
+        for (T t : list) {
             t.writeTo(byteBuf);
         }
     }

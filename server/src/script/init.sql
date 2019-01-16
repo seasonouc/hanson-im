@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS chat;
 use chat;
 
 DROP TABLE IF EXISTS user_group;
-drop TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS user_group(
   `id` BIGINT(15) NOT NULL AUTO_INCREMENT,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS user_group(
   `create_time` TIMESTAMP DEFAULT now(),
   `update_time` TIMESTAMP DEFAULT now(),
   PRIMARY KEY (`id`),
-  index group_index(group_id(14))
+  unique index group_index(group_id(14))
 )ENGINE =innodb;
 
 CREATE TABLE IF NOT EXISTS users(
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS users(
   `create_time` TIMESTAMP DEFAULT now(),
   `update_time` TIMESTAMP DEFAULT now(),
   PRIMARY KEY(`id`),
-  INDEX user_index(user_id(14))
+  unique INDEX user_index(user_id(14))
 )ENGINE =innodb;
 
 

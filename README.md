@@ -12,7 +12,7 @@ now this support the following function
 - [ ] picture encrypt
 - [ ] file encrypt
 - [ ] server extension
-- [ ] data extension
+- [ ] storage  extension
 - [ ] server gateway
 - [ ] server high available
 - [ ] SSL certificate identify
@@ -32,6 +32,7 @@ this is about tow nodes communication,what about three?four? or more?
 we can use the algorithm in another way!
 
 if we have a group of three people,we can exchange the key like this way
+
 **1.the first stage**
 ![](/book/protocol1.0_2.png)
 **2.the second stage**
@@ -39,7 +40,10 @@ if we have a group of three people,we can exchange the key like this way
 
 So in such way can get the final  encryption key.
 
-Base on the theory,we can build a group chat privately ,and meanwhile ,the most of the data are store in the client storage.so it dosen't  matter that if the sever was attacked.In someway,it is decentralized.
+Base on the theory,we can build a group chat privately ,and meanwhile ,
+the most of the data are store in the client storage.
+So it dosen't  matter that if the sever was attacked.In someway,it is decentralized.
+
 
 
 why I name it hanson,because my name is hanson
