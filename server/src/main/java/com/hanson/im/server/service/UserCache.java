@@ -18,7 +18,7 @@ public interface UserCache {
 
     void setOnline(User user);
     
-    void setOffLineUser(UserInfo user);
+    void setOffLineUser(String  userId);
 
     boolean userIsOnline(String userId);
 

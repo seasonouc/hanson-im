@@ -22,7 +22,9 @@ public class LoginRequest implements HimSerializer {
      */
     private String userName;
 
-    public LoginRequest(){
+    private String password;
+
+    public LoginRequest() {
 
     }
 
@@ -44,8 +46,8 @@ public class LoginRequest implements HimSerializer {
 
     @Override
     public void writeTo(ByteBuf byteBuffer) throws EncodeException {
-        WriterUtil.writeString(userId,byteBuffer);
-        WriterUtil.writeString(userName,byteBuffer);
+        WriterUtil.writeString(userId, byteBuffer);
+        WriterUtil.writeString(userName, byteBuffer);
     }
 
     @Override

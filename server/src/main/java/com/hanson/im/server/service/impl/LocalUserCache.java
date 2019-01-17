@@ -45,8 +45,8 @@ public class LocalUserCache implements UserCache{
     }
 
     @Override
-    public void setOffLineUser(UserInfo user) {
-        userInfoMap.remove(user.getId());
+    public void setOffLineUser(String userId) {
+        userInfoMap.remove(userId);
     }
 
     @Override

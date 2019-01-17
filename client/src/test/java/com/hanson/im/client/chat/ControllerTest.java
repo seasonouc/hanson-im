@@ -1,5 +1,7 @@
 package com.hanson.im.client.chat;
 
+import com.hanson.im.client.handler.BuildChannelListenner;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -11,6 +13,7 @@ import java.util.List;
  * @Date 2019/1/16
  * @Description:
  */
+@Slf4j
 public class ControllerTest {
 
     @Test
@@ -40,7 +43,7 @@ public class ControllerTest {
 
 
     @Test
-    public void testBuildEncryptChannel() {
+    public void testBuildEncryptChannel() throws InterruptedException {
         Controller controller1 = new Controller();
 
         controller1.setInetSocketAddress("localhost", 6377);
@@ -59,10 +62,31 @@ public class ControllerTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        controller1.setListenner(new BuildChannelListenner() {
+            @Override
+            public void buildChannle(String sessionId) {
+                log.info("controller1 build channel connection with session :{}",sessionId);
+                controller1.sendMessage(sessionId,"hello world").whenComplete((result,error)->{log.info("send text message result :{}",result);});
+            }
+        });
+        controller2.setListenner(new BuildChannelListenner() {
+            @Override
+            public void buildChannle(String sessionId) {
+                log.info("controller2 build channel connection with session :{}",sessionId);
+            }
+        });
+
         if (controller1.getLogin() && controller2.getLogin()) {
             List<String> userList = new ArrayList<>();
+            userList.add("456");
+            controller1.buildEncryptChannle(userList).whenComplete((result,error)->{
+                log.info("controller1 send build mesasge result:{}",result);
+            });
 
-            controller1.buildEncryptChannle(userList);
         }
+
+        Thread.sleep(5000);
+
     }
+
 }

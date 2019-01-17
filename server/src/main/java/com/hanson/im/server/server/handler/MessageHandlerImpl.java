@@ -1,6 +1,7 @@
 package com.hanson.im.server.server.handler;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.hanson.im.common.protocol.Message;
 import com.hanson.im.common.protocol.MessageBody;
 import com.hanson.im.common.protocol.MessageHeader;
@@ -13,11 +14,13 @@ import com.hanson.im.server.service.UserService;
 import com.hanson.im.server.service.UserVailidator;
 import com.hanson.im.server.util.MessageBuilder;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,7 +43,9 @@ public class MessageHandlerImpl implements MessageHandler {
     private UserService userService;
 
 
-    private ConcurrentHashMap<String, Channel> channelMap = new ConcurrentHashMap<>();
+    private Map<String, Channel> channelMap = new ConcurrentHashMap<>();
+
+    private Map<ChannelId,String> channelIdMap = new ConcurrentHashMap<>();
 
     @Override
     public void handleMessage(Channel channel, Message message) {
@@ -48,6 +53,7 @@ public class MessageHandlerImpl implements MessageHandler {
         MessageBody body = message.getBody();
         MessageType messageType = header.getMessageType();
 
+        log.info("receive message :{}", JSONObject.toJSONString(message));
         switch (messageType) {
             case LOGIN_TO:
                 if (!(body.getData() instanceof LoginRequest)) {
@@ -56,11 +62,12 @@ public class MessageHandlerImpl implements MessageHandler {
                     return;
                 }
                 LoginRequest loginRequest = (LoginRequest) body.getData();
-                if (userCache.userIsOnline(header.getFrom())) {
+                if (userCache.userIsOnline(loginRequest.getUserId())) {
                     Message backMessage = MessageBuilder.buildSystemMessage(404, "user is already online,login repeat");
                     channel.writeAndFlush(backMessage).addListener(ch -> channel.close());
                     return;
-                } else if (!userVailidator.validateLogin(loginRequest)) {
+                } else
+                if (!userVailidator.validateLogin(loginRequest)) {
                     Message backMessage = MessageBuilder.buildSystemMessage(404, "the login information is error");
                     channel.writeAndFlush(backMessage).addListener(ch -> channel.close());
                     log.info("validate user failed,userId:{},userName:{}", loginRequest.getUserId(), loginRequest.getUserName());
@@ -71,6 +78,7 @@ public class MessageHandlerImpl implements MessageHandler {
                         .addListener(ch -> {
                             if (ch.isSuccess()) {
                                 channelMap.put(loginRequest.getUserId(), channel);
+                                channelIdMap.put(channel.id(),loginRequest.getUserId());
                                 userCache.setOnline(user);
                                 log.info("userId:{},userName:{} login success", user.getUserId(), user.getUserName());
                             } else {
@@ -86,11 +94,27 @@ public class MessageHandlerImpl implements MessageHandler {
                 toList.forEach(userId -> {
                     Channel toChannel = channelMap.get(userId);
                     if (toChannel != null) {
-                        toChannel.writeAndFlush(message);
+                        toChannel.writeAndFlush(message).addListener(resultCh -> {
+                            if (!resultCh.isSuccess()) {
+                                log.error("failed to send message to:{}", userId);
+                            }
+                        });
+                    } else {
+                        log.info("can't send message to userId:{},there is no channel", userId);
                     }
 
                 });
                 break;
+        }
+    }
+
+    @Override
+    public void userOffline(ChannelId channelId) {
+        String userId = channelIdMap.remove(channelId);
+
+        if(userId != null){
+            channelMap.remove(userId);
+            userCache.setOffLineUser(userId);
         }
     }
 }

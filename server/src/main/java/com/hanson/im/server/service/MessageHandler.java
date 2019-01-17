@@ -2,6 +2,7 @@ package com.hanson.im.server.service;
 
 import com.hanson.im.common.protocol.Message;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelId;
 
 
 /**
@@ -18,4 +19,6 @@ public interface MessageHandler {
      * @param message
      */
     void handleMessage(Channel channel, Message message);
+
+    void userOffline(ChannelId channelId);
 }

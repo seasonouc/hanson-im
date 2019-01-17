@@ -7,6 +7,8 @@ import com.hanson.im.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author hanson
  * @Date 2019/1/11
@@ -29,5 +31,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public User getUserById(String userId) {
         return userMapper.selectByUserId(userId);
+    }
+
+    @Override
+    public List<User> getOnlineUser(int count) {
+        return null;
     }
 }

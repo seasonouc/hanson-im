@@ -1,13 +1,11 @@
 package com.hanson.im.common.protocol.body;
 
 import com.hanson.im.common.layer.HimSerializer;
+import com.hanson.im.common.protocol.util.WriterUtil;
 import io.netty.buffer.ByteBuf;
 
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author hanson
@@ -33,15 +31,8 @@ public class ExchangeKeySet implements HimSerializer {
     public void writeTo(ByteBuf byteBuffer) {
         byteBuffer.writeInt(exChangeKeyCache.size());
         for (Map.Entry<BigInteger, Set<String>> entry : exChangeKeyCache.entrySet()) {
-            byte[] keyBytes = entry.getKey().toByteArray();
-            byteBuffer.writeInt(keyBytes.length);
-            byteBuffer.writeBytes(keyBytes);
-            byteBuffer.writeInt(entry.getValue().size());
-            entry.getValue().forEach(userId -> {
-                byte[] userBytes = userId.getBytes();
-                byteBuffer.writeInt(userBytes.length);
-                byteBuffer.writeBytes(userBytes);
-            });
+            WriterUtil.writeBigInt(entry.getKey(),byteBuffer);
+            WriterUtil.writeSetString(entry.getValue(),byteBuffer);
         }
     }
 
@@ -50,21 +41,9 @@ public class ExchangeKeySet implements HimSerializer {
         exChangeKeyCache = new HashMap<>();
         int mapSize = byteBuffer.readInt();
         for (int i = 0; i < mapSize; i++) {
-            int keyLength = byteBuffer.readInt();
-            byte[] keyByte = new byte[keyLength];
-            byteBuffer.readBytes(keyByte, 0, keyLength);
-            BigInteger key = new BigInteger(keyByte);
-
-            Set<String> userIds = new HashSet<>();
-            int usersSize = byteBuffer.readInt();
-            for (int j = 0; j < usersSize; j++) {
-                int userLength = byteBuffer.readInt();
-                byte[] userBytes = new byte[userLength];
-                byteBuffer.readBytes(userBytes, 0, userLength);
-                String userId = new String(userBytes);
-                userIds.add(userId);
-                exChangeKeyCache.put(key,userIds);
-            }
+            BigInteger key = WriterUtil.readBigInt(byteBuffer);
+            Set<String> userIds = WriterUtil.readSetString(byteBuffer);
+            exChangeKeyCache.put(key,userIds);
         }
     }
 }

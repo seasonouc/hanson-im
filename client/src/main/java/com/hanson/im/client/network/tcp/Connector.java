@@ -1,18 +1,12 @@
 package com.hanson.im.client.network.tcp;
 
-import com.hanson.im.client.ClientConfig;
 import com.hanson.im.client.handler.HimClientHandler;
 import com.hanson.im.client.handler.IMReceiver;
 import com.hanson.im.client.handler.IMSender;
-import com.hanson.im.client.handler.MessageAcceptor;
 import com.hanson.im.common.cryption.Cryptor;
 import com.hanson.im.common.decode.HimDecoder;
 import com.hanson.im.common.encode.HimEncoder;
 import com.hanson.im.common.protocol.Message;
-import com.hanson.im.common.protocol.MessageBody;
-import com.hanson.im.common.protocol.MessageHeader;
-import com.hanson.im.common.protocol.MessageType;
-import com.hanson.im.common.protocol.body.LoginRequest;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -31,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
  * @Description:
  */
 @Slf4j
-public class Connector implements IMSender{
+public class Connector implements IMSender {
 
     /**
      * nio event loop grouop
@@ -45,13 +39,13 @@ public class Connector implements IMSender{
     private Map<String, Set<String>> chatCache;
     private Map<String, Cryptor> cryptorCache;
 
-    public Connector(IMReceiver imReceiver,Map<String, Set<String>> chatCache, Map<String, Cryptor> cryptorCache){
+    public Connector(IMReceiver imReceiver, Map<String, Set<String>> chatCache, Map<String, Cryptor> cryptorCache) {
         this.imReceiver = imReceiver;
         this.chatCache = chatCache;
         this.cryptorCache = cryptorCache;
     }
 
-    public CompletableFuture<Boolean> start(InetSocketAddress address){
+    public CompletableFuture<Boolean> start(InetSocketAddress address) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
 
         Bootstrap bootstrap = new Bootstrap();
@@ -60,10 +54,10 @@ public class Connector implements IMSender{
 
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
-                .option(ChannelOption.SO_KEEPALIVE,true)
-                .option(ChannelOption.TCP_NODELAY,true)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,1000)
-                .handler(new ChannelInitializer<Channel>(){
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
+                .handler(new ChannelInitializer<Channel>() {
                     @Override
                     protected void initChannel(Channel channel) throws Exception {
                         channel.pipeline().addLast(new HimDecoder());
@@ -75,7 +69,7 @@ public class Connector implements IMSender{
         ChannelFuture f = null;
         try {
             f = bootstrap.connect(address).sync();
-            if(f.isSuccess()){
+            if (f.isSuccess()) {
                 this.channel = f.channel();
 
             }
@@ -89,9 +83,12 @@ public class Connector implements IMSender{
 
 
     @Override
-    public CompletableFuture<Void> send(Message message) {
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        channel.writeAndFlush(message).addListener(channel->future.complete(null));
+    public CompletableFuture<Boolean> send(Message message) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        channel.writeAndFlush(message).addListener(channel -> {
+            if (channel.isSuccess()) future.complete(true);
+            else future.complete(false);
+        });
         return future;
     }
 

@@ -5,9 +5,12 @@ import com.hanson.im.common.exception.EncryptionException;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
@@ -32,8 +35,18 @@ public class Cryptor {
     /**
      * the key to encrypt the message and decrypt the message
      */
-    private BigInteger cypherKey;
+    private transient BigInteger cypherKey;
 
+
+    /**
+     * encipher
+     */
+    private transient Cipher encryptCipher;
+
+    /**
+     * decipher
+     */
+    private transient Cipher decryptCipher;
 
     /**
      * initiate you private exchange key
@@ -66,6 +79,27 @@ public class Cryptor {
 
     public void setCypherKey(BigInteger cypherKey) {
         this.cypherKey = cypherKey;
+        SecureRandom random = new SecureRandom(cypherKey.toByteArray());
+        try {
+
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");
+            kgen.init(128, random);
+            SecretKey secretKey = kgen.generateKey();
+            byte[] encodeFormat = secretKey.getEncoded();
+            SecretKeySpec key = new SecretKeySpec(encodeFormat, "AES");
+            encryptCipher = Cipher.getInstance("AES");
+            decryptCipher = Cipher.getInstance("AES");
+
+            encryptCipher.init(Cipher.ENCRYPT_MODE, key);
+            decryptCipher.init(Cipher.DECRYPT_MODE, key);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -88,21 +122,32 @@ public class Cryptor {
      * @return
      */
     public byte[] encrypt(byte[] plainMessage) throws EncryptionException {
-        SecureRandom random = new SecureRandom(cypherKey.toByteArray());
         try {
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128, random);
-            SecretKey secretKey = kgen.generateKey();
-            byte[] encodeFormat = secretKey.getEncoded();
-            SecretKeySpec key = new SecretKeySpec(encodeFormat, "AES");
-
-            Cipher cigher = Cipher.getInstance("AES");
-            cigher.init(Cipher.ENCRYPT_MODE, key);
-
-            return cigher.doFinal(plainMessage);
+            return encryptCipher.doFinal(plainMessage);
         } catch (Exception e) {
             throw new EncryptionException(e.getMessage());
         }
+    }
+
+    /**
+     * encrypt text message
+     * @param text
+     * @return
+     * @throws EncryptionException
+     */
+    public byte[] encryptString(String text) throws EncryptionException {
+        return encrypt(text.getBytes());
+    }
+
+    /**
+     * decrypt string message
+     * @param cipher
+     * @return
+     * @throws DecryptionException
+     */
+    public String decryptString(byte[] cipher) throws DecryptionException {
+        byte[] bytes = decrypt(cipher);
+        return new String(bytes);
     }
 
     /**
@@ -112,18 +157,8 @@ public class Cryptor {
      * @return
      */
     public byte[] decrypt(byte[] encryptMessage) throws DecryptionException {
-        SecureRandom random = new SecureRandom(cypherKey.toByteArray());
         try {
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128, random);
-            SecretKey secretKey = kgen.generateKey();
-            byte[] encodeFormat = secretKey.getEncoded();
-            SecretKeySpec key = new SecretKeySpec(encodeFormat, "AES");
-
-            Cipher cigher = Cipher.getInstance("AES");
-            cigher.init(Cipher.DECRYPT_MODE, key);
-
-            return cigher.doFinal(encryptMessage);
+            return decryptCipher.doFinal(encryptMessage);
         } catch (Exception e) {
             throw new DecryptionException(e.getMessage());
         }

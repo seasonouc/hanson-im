@@ -1,18 +1,23 @@
 package com.hanson.im.client.chat;
 
 import com.hanson.im.client.ClientConfig;
+import com.hanson.im.client.handler.BuildChannelListenner;
 import com.hanson.im.client.handler.IMReceiver;
 import com.hanson.im.client.handler.IMSender;
 import com.hanson.im.client.handler.MessageAcceptor;
 import com.hanson.im.client.network.tcp.Connector;
 import com.hanson.im.common.cryption.Cryptor;
+import com.hanson.im.common.exception.EncryptionException;
 import com.hanson.im.common.protocol.Message;
 import com.hanson.im.common.protocol.MessageBody;
 import com.hanson.im.common.protocol.MessageHeader;
 import com.hanson.im.common.protocol.MessageType;
+import com.hanson.im.common.protocol.body.EncryptText;
 import com.hanson.im.common.protocol.body.ExchangeEncryptKey;
 import com.hanson.im.common.protocol.body.ExchangeKeySet;
 import com.hanson.im.common.protocol.body.LoginRequest;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigInteger;
@@ -39,6 +44,9 @@ public class Controller implements IMSender, IStatus {
 
     private boolean login;
 
+    /**
+     * http server address
+     */
     private String httpServerAddr;
 
     private InetSocketAddress address;
@@ -61,6 +69,11 @@ public class Controller implements IMSender, IStatus {
      * message receiver
      */
     private IMReceiver imReceiver;
+
+    /**
+     * build channel listener
+     */
+    private BuildChannelListenner listenner;
 
     public Controller() {
 
@@ -99,7 +112,9 @@ public class Controller implements IMSender, IStatus {
      *
      * @param userList
      */
-    public void buildEncryptChannle(List<String> userList) {
+    public CompletableFuture<Boolean> buildEncryptChannle(List<String> userList) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+        log.info("build encrypt channel with {}",userList);
         Message message = new Message();
 
         MessageHeader header = new MessageHeader();
@@ -125,17 +140,23 @@ public class Controller implements IMSender, IStatus {
 
         ExchangeKeySet exchangeKeySet = new ExchangeKeySet();
         Map<BigInteger, Set<String>> keySet = new HashMap<>();
-        Set<String> userSet = new HashSet<>(userList);
+        Set<String> userSet = new HashSet<>();
+        userSet.add(myId);
         keySet.put(cryptor.getExchangeKey(), userSet);
+        exchangeKeySet.setExChangeKeyCache(keySet);
 
         exchangeKeySetList.add(exchangeKeySet);
         exchangeEncryptKey.setExchangeKeySetList(exchangeKeySetList);
+
+        Set<String> joinSet = new HashSet<>(userList);
+        joinSet.add(myId);
+        exchangeEncryptKey.setJoinSet(joinSet);
 
         body.setData(exchangeEncryptKey, ExchangeEncryptKey.class);
 
         message.setHeader(header);
         message.setBody(body);
-        imSender.send(message);
+        return imSender.send(message);
     }
 
 
@@ -160,8 +181,36 @@ public class Controller implements IMSender, IStatus {
         return imSender.send(message);
     }
 
-    public void sendMessage(String sessionId, String text) {
+    public CompletableFuture<Boolean> sendMessage(String sessionId, String text) {
+        if(chatCache.containsKey(sessionId)){
+            return new CompletableFuture<>();
+        }
+        Set<String> set = new HashSet<>(chatCache.get(sessionId));
+        if(set.size() == 0){
+            return new CompletableFuture<>();
+        }
+        set.remove(myId);
+        Message message = new Message();
+        MessageHeader header = new MessageHeader();
+        header.setToList(new ArrayList<>(set));
+        header.setVersion(ClientConfig.version);
+        header.setFrom(myId);
+        header.setMessageType(MessageType.ENCRYPT_TEXT_MSG);
+        message.setHeader(header);
 
+        MessageBody body = new MessageBody();
+        EncryptText encryptText = new EncryptText();
+        Cryptor cryptor = cryptorCache.get(sessionId);
+        try {
+            encryptText.setContent(cryptor.encryptString(text));
+        } catch (EncryptionException e) {
+            log.error("encrypt message error:{}",e.getMessage());
+        }
+        encryptText.setSessionId(sessionId);
+        body.setData(encryptText,EncryptText.class);
+        message.setBody(body);
+
+        return imSender.send(message);
     }
 
     public void regiser(String userId, String userName) {
@@ -172,6 +221,10 @@ public class Controller implements IMSender, IStatus {
         Long time = System.currentTimeMillis();
         Random random = new Random(100);
         return time.toString() + random.nextInt();
+    }
+
+    public void setListenner(BuildChannelListenner listenner){
+        this.listenner = listenner;
     }
 
     @Override
@@ -187,5 +240,20 @@ public class Controller implements IMSender, IStatus {
     @Override
     public boolean getLogin() {
         return login;
+    }
+
+    @Override
+    public String getMyId() {
+        return myId;
+    }
+
+    @Override
+    public String getMyName() {
+        return myName;
+    }
+
+    @Override
+    public void buildChannel(String userId) {
+        this.listenner.buildChannle(userId);
     }
 }

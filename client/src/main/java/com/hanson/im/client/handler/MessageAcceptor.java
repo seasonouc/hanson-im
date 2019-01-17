@@ -1,8 +1,10 @@
 package com.hanson.im.client.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hanson.im.client.ClientConfig;
 import com.hanson.im.client.chat.IStatus;
 import com.hanson.im.common.cryption.Cryptor;
+import com.hanson.im.common.exception.DecryptionException;
 import com.hanson.im.common.protocol.*;
 import com.hanson.im.common.protocol.body.EncryptText;
 import com.hanson.im.common.protocol.body.ExchangeEncryptKey;
@@ -52,6 +54,7 @@ public class MessageAcceptor implements IMReceiver {
     public void receive(Message message) {
         MessageHeader header = message.getHeader();
         MessageBody body = message.getBody();
+        log.debug("receive message {}", JSONObject.toJSONString(message));
         switch (header.getMessageType()) {
             case LOGIN_BACK:
                 ServerResponse response = (ServerResponse) body.getData();
@@ -84,23 +87,30 @@ public class MessageAcceptor implements IMReceiver {
                 if (header.getMessageType() == MessageType.KEY_EXCHANGE_TO) {
                     Map<BigInteger, Set<String>> processMap = new HashMap<>();
                     Set<String> initSet = new HashSet<>();
-                    initSet.add(myId);
+                    initSet.add(iStatus.getMyId());
                     processMap.put(cryptor.getExchangeKey(), initSet);
 
                     ExchangeKeySet exchangeKeySet = new ExchangeKeySet();
                     exchangeKeySet.setExChangeKeyCache(processMap);
                     outputKey.getExchangeKeySetList().add(exchangeKeySet);
                 }
-                if (cryptor.getCypherKey() != null) {
-                    chatCache.put(sessionId,new HashSet<>(inputKey.getJoinSet()));
-                }
+
 
                 Message newMessage = makeKeyExchangeMsg(outputKey);
                 imSender.send(newMessage);
                 break;
             case ENCRYPT_TEXT_MSG:
                 EncryptText encryptText = (EncryptText) body.getData();
-                encryptText.getText();
+                sessionId =  encryptText.getSessionId();
+                cryptor = cryptorCache.get(sessionId);
+                if(cryptor != null){
+                    try {
+                        String content = cryptor.decryptString(encryptText.getContent());
+                        log.debug("receive text:{}",content);
+                    } catch (DecryptionException e) {
+                        log.error("decrypt error:{}",e.getMessage());
+                    }
+                }
                 break;
             default:
                 log.error("un handle message ");
@@ -132,10 +142,12 @@ public class MessageAcceptor implements IMReceiver {
                     if (set.size() == joinNumbser - 1) {
                         BigInteger finalKey = cryptor.addExchangeKey(key);
                         cryptor.setCypherKey(finalKey);
+                        chatCache.put(session,joinSet);
+                        iStatus.buildChannel(session);
                     } else {
                         BigInteger processKey = cryptor.addExchangeKey(key);
                         Map<BigInteger, Set<String>> processMap = new HashMap<>();
-                        set.add(myId);
+                        set.add(iStatus.getMyId());
                         processMap.put(processKey, set);
                         ExchangeKeySet exchangeKeySet = new ExchangeKeySet();
                         exchangeKeySet.setExChangeKeyCache(processMap);
@@ -163,12 +175,12 @@ public class MessageAcceptor implements IMReceiver {
     private Message makeKeyExchangeMsg(ExchangeEncryptKey outputKey) {
         Message newMessage = new Message();
         MessageHeader newHeader = new MessageHeader();
-        newHeader.setFrom(myId);
+        newHeader.setFrom(iStatus.getMyId());
         newHeader.setMessageType(MessageType.KEY_EXCHANGE_BACK);
         newHeader.setVersion(ClientConfig.version);
 
         Set<String> toSet = new HashSet<>(outputKey.getJoinSet());
-        toSet.remove(myId);
+        toSet.remove(iStatus.getMyId());
         newHeader.setToList(new ArrayList<>(toSet));
         newMessage.setHeader(newHeader);
 

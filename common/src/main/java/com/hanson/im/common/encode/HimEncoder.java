@@ -1,12 +1,10 @@
 package com.hanson.im.common.encode;
 
+import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.protocol.Message;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-
-import java.nio.ByteBuffer;
 
 
 /**
@@ -18,9 +16,15 @@ public class HimEncoder extends MessageToByteEncoder<Message>{
 
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, Message message, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, Message message, ByteBuf byteBuf) {
         byteBuf.writeInt(0);
-        message.writeTo(byteBuf);
+
+        try {
+            message.writeTo(byteBuf);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
         int length = byteBuf.readableBytes();
         byteBuf.resetWriterIndex();
         byteBuf.writeInt(length - 4);
@@ -28,6 +32,7 @@ public class HimEncoder extends MessageToByteEncoder<Message>{
     }
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
+        cause.printStackTrace();
         ctx.close();
     }
 }

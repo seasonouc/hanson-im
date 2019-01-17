@@ -32,7 +32,7 @@ public class HimServerChannelHandler extends SimpleChannelInboundHandler<Message
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.debug("built a connection  with a client");
+        log.info("build connection  with a client,name:{},channelId:{}",ctx.name(), ctx.channel().id());
     }
 
     @Override
@@ -41,4 +41,9 @@ public class HimServerChannelHandler extends SimpleChannelInboundHandler<Message
         ctx.close();
     }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx){
+        handler.userOffline(ctx.channel().id());
+        log.info("disconnect with a client,name:{},channelId:{}",ctx.name(), ctx.channel().id());
+    }
 }

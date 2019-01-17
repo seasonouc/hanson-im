@@ -34,8 +34,11 @@ we can use the algorithm in another way!
 if we have a group of three people,we can exchange the key like this way
 
 **1.the first stage**
+
 ![](/book/protocol1.0_2.png)
+
 **2.the second stage**
+
 ![](/book/protocol1.0_3.png)
 
 So in such way can get the final  encryption key.

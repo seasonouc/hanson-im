@@ -6,7 +6,9 @@ import io.netty.buffer.ByteBuf;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author hanson
@@ -45,6 +47,25 @@ public class WriterUtil {
             list.add(str);
         }
         return list;
+    }
+
+    public static void writeSetString(Set<String> set, ByteBuf byteBuf) {
+        if (set == null) {
+            byteBuf.writeInt(0);
+            return;
+        }
+        byteBuf.writeInt(set.size());
+        set.forEach(str -> writeString(str, byteBuf));
+    }
+
+    public static Set<String> readSetString(ByteBuf byteBuf) {
+        int length = byteBuf.readInt();
+        Set<String> set = new HashSet<>();
+        for (int i = 0; i < length; i++) {
+            String str = readString(byteBuf);
+            set.add(str);
+        }
+        return set;
     }
 
     public static void writeBigInt(BigInteger b, ByteBuf byteBuf) {

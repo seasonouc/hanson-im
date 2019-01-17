@@ -15,7 +15,7 @@ public class EncryptText implements HimSerializer {
     /**
      * the encrypt text send or received
      */
-    private String text;
+    private byte[] content;
 
     /**
      * the encrypt key version
@@ -32,12 +32,12 @@ public class EncryptText implements HimSerializer {
 
     private String sessionId;
 
-    public String getText() {
-        return text;
+    public byte[] getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setContent(byte[] content) {
+        this.content = content;
     }
 
     public EncryptText() {
@@ -47,13 +47,13 @@ public class EncryptText implements HimSerializer {
     @Override
     public void writeTo(ByteBuf byteBuffer)  {
         WriterUtil.writeString(sessionId,byteBuffer);
-        WriterUtil.writeString(text,byteBuffer);
+        byteBuffer.writeInt(content.length);
+        byteBuffer.writeBytes(content);
     }
 
     @Override
     public void readFrom(ByteBuf byteBuffer) {
         sessionId = WriterUtil.readString(byteBuffer);
-        text = WriterUtil.readString(byteBuffer);
 
     }
 }

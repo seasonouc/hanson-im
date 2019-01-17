@@ -14,5 +14,5 @@ public interface IMSender {
      * use it to send message
      * @param message
      */
-    CompletableFuture send(Message message);
+    CompletableFuture<Boolean> send(Message message);
 }
