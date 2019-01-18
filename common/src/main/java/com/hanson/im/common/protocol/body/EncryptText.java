@@ -1,7 +1,5 @@
 package com.hanson.im.common.protocol.body;
 
-import com.hanson.im.common.exception.DecodeException;
-import com.hanson.im.common.exception.EncodeException;
 import com.hanson.im.common.layer.HimSerializer;
 import com.hanson.im.common.protocol.util.WriterUtil;
 import io.netty.buffer.ByteBuf;
@@ -15,7 +13,7 @@ public class EncryptText implements HimSerializer {
     /**
      * the encrypt text send or received
      */
-    private byte[] content;
+    private String content;
 
     /**
      * the encrypt key version
@@ -32,11 +30,11 @@ public class EncryptText implements HimSerializer {
 
     private String sessionId;
 
-    public byte[] getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(byte[] content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
@@ -47,13 +45,12 @@ public class EncryptText implements HimSerializer {
     @Override
     public void writeTo(ByteBuf byteBuffer)  {
         WriterUtil.writeString(sessionId,byteBuffer);
-        byteBuffer.writeInt(content.length);
-        byteBuffer.writeBytes(content);
+        WriterUtil.writeString(content,byteBuffer);
     }
 
     @Override
     public void readFrom(ByteBuf byteBuffer) {
         sessionId = WriterUtil.readString(byteBuffer);
-
+        content = WriterUtil.readString(byteBuffer);
     }
 }

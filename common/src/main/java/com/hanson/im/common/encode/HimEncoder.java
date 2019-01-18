@@ -5,6 +5,7 @@ import com.hanson.im.common.protocol.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -12,6 +13,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * @Date 2019/1/11
  * @Description:
  */
+@Slf4j
 public class HimEncoder extends MessageToByteEncoder<Message>{
 
 
@@ -32,7 +34,7 @@ public class HimEncoder extends MessageToByteEncoder<Message>{
     }
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
-        cause.printStackTrace();
+        log.error("encode caught error:{}",cause.getStackTrace());
         ctx.close();
     }
 }

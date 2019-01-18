@@ -51,6 +51,8 @@ public class ControllerTest {
         controller1.setIdAndName("123", "hanson");
         controller1.login();
 
+        log.info("test generate id:{}",controller1.generateSessionId());
+
         Controller controller2 = new Controller();
         controller2.setInetSocketAddress("localhost", 6377);
         controller2.connect();
@@ -85,7 +87,7 @@ public class ControllerTest {
 
         }
 
-        Thread.sleep(5000);
+        Thread.sleep(50000);
 
     }
 

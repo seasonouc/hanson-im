@@ -5,7 +5,9 @@ import com.hanson.im.common.protocol.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -13,6 +15,7 @@ import java.util.List;
  * @Date 2019/1/11
  * @Description:
  */
+@Slf4j
 public class HimDecoder extends ByteToMessageDecoder{
 
     private int BASE_LENGTH = 8;
@@ -38,7 +41,7 @@ public class HimDecoder extends ByteToMessageDecoder{
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
-        cause.printStackTrace();
+        log.error("decode caught error:{}",cause.getMessage());
         ctx.close();
     }
 }

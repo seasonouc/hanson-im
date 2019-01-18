@@ -3,6 +3,7 @@ package com.hanson.im.common.cryption;
 import com.hanson.im.common.exception.DecryptionException;
 import com.hanson.im.common.exception.EncryptionException;
 
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -12,6 +13,7 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * @author hanson
@@ -47,6 +49,8 @@ public class Cryptor {
      * decipher
      */
     private transient Cipher decryptCipher;
+
+
 
     /**
      * initiate you private exchange key
@@ -135,8 +139,9 @@ public class Cryptor {
      * @return
      * @throws EncryptionException
      */
-    public byte[] encryptString(String text) throws EncryptionException {
-        return encrypt(text.getBytes());
+    public String encryptString(String text) throws EncryptionException {
+        byte[] enbytes = encrypt(text.getBytes());
+        return Base64.getEncoder().encodeToString(enbytes);
     }
 
     /**
@@ -145,8 +150,9 @@ public class Cryptor {
      * @return
      * @throws DecryptionException
      */
-    public String decryptString(byte[] cipher) throws DecryptionException {
-        byte[] bytes = decrypt(cipher);
+    public String decryptString(String cipher) throws DecryptionException {
+        byte[] cipherByte = Base64.getDecoder().decode(cipher);
+        byte[] bytes = decrypt(cipherByte);
         return new String(bytes);
     }
 

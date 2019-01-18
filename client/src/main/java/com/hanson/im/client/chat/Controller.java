@@ -16,8 +16,6 @@ import com.hanson.im.common.protocol.body.EncryptText;
 import com.hanson.im.common.protocol.body.ExchangeEncryptKey;
 import com.hanson.im.common.protocol.body.ExchangeKeySet;
 import com.hanson.im.common.protocol.body.LoginRequest;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigInteger;
@@ -114,7 +112,7 @@ public class Controller implements IMSender, IStatus {
      */
     public CompletableFuture<Boolean> buildEncryptChannle(List<String> userList) {
         CompletableFuture<String> future = new CompletableFuture<>();
-        log.info("build encrypt channel with {}",userList);
+        log.info("build encrypt channel with {}", userList);
         Message message = new Message();
 
         MessageHeader header = new MessageHeader();
@@ -182,17 +180,18 @@ public class Controller implements IMSender, IStatus {
     }
 
     public CompletableFuture<Boolean> sendMessage(String sessionId, String text) {
-        if(chatCache.containsKey(sessionId)){
-            return new CompletableFuture<>();
+
+        Set<String> set = chatCache.get(sessionId);
+        if (set == null || set.size() == 0) {
+            CompletableFuture<Boolean> future = new CompletableFuture<>();
+            future.complete(false);
+            return future;
         }
-        Set<String> set = new HashSet<>(chatCache.get(sessionId));
-        if(set.size() == 0){
-            return new CompletableFuture<>();
-        }
-        set.remove(myId);
+        Set<String> sendSet = new HashSet<>(set);
+        sendSet.remove(myId);
         Message message = new Message();
         MessageHeader header = new MessageHeader();
-        header.setToList(new ArrayList<>(set));
+        header.setToList(new ArrayList<>(sendSet));
         header.setVersion(ClientConfig.version);
         header.setFrom(myId);
         header.setMessageType(MessageType.ENCRYPT_TEXT_MSG);
@@ -204,10 +203,10 @@ public class Controller implements IMSender, IStatus {
         try {
             encryptText.setContent(cryptor.encryptString(text));
         } catch (EncryptionException e) {
-            log.error("encrypt message error:{}",e.getMessage());
+            log.error("encrypt message error:{}", e.getMessage());
         }
         encryptText.setSessionId(sessionId);
-        body.setData(encryptText,EncryptText.class);
+        body.setData(encryptText, EncryptText.class);
         message.setBody(body);
 
         return imSender.send(message);
@@ -217,13 +216,13 @@ public class Controller implements IMSender, IStatus {
 
     }
 
-    private String generateSessionId() {
+    public String generateSessionId() {
         Long time = System.currentTimeMillis();
         Random random = new Random(100);
         return time.toString() + random.nextInt();
     }
 
-    public void setListenner(BuildChannelListenner listenner){
+    public void setListenner(BuildChannelListenner listenner) {
         this.listenner = listenner;
     }
 
