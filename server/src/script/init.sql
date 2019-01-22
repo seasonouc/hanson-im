@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS users(
   `id` BIGINT(15) NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(24) NOT NULL ,
   `user_name` VARCHAR(32) NOT NULL,
+  `user_password` VARCHAR(32) NOT NULL,
   `user_type` TINYINT NOT NULL DEFAULT 0 COMMENT '0 normal ,1 group',
   `create_time` TIMESTAMP DEFAULT now(),
   `update_time` TIMESTAMP DEFAULT now(),
