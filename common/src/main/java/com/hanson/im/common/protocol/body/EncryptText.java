@@ -15,6 +15,12 @@ public class EncryptText implements HimSerializer {
      */
     private String content;
 
+
+    /**
+     * user name
+     */
+    private String userName;
+
     /**
      * the encrypt key version
      */
@@ -38,6 +44,15 @@ public class EncryptText implements HimSerializer {
         this.content = content;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+
     public EncryptText() {
 
     }
@@ -45,12 +60,14 @@ public class EncryptText implements HimSerializer {
     @Override
     public void writeTo(ByteBuf byteBuffer)  {
         WriterUtil.writeString(sessionId,byteBuffer);
+        WriterUtil.writeString(userName,byteBuffer);
         WriterUtil.writeString(content,byteBuffer);
     }
 
     @Override
     public void readFrom(ByteBuf byteBuffer) {
         sessionId = WriterUtil.readString(byteBuffer);
+        userName = WriterUtil.readString(byteBuffer);
         content = WriterUtil.readString(byteBuffer);
     }
 }

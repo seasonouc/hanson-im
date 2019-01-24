@@ -1,4 +1,4 @@
-package com.hanson.im.client.chat;
+package com.hanson.im.client.logic;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.hanson.im.server.user;
+package com.hanson.im.common.protocol.body;
 
 /**
  * @author hanson

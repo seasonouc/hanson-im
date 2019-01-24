@@ -47,7 +47,6 @@ public class Connector implements IMSender {
 
     public CompletableFuture<Boolean> start(InetSocketAddress address) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
-
         Bootstrap bootstrap = new Bootstrap();
         HimClientHandler handler = new HimClientHandler();
         handler.setImReceiver(imReceiver);
@@ -79,6 +78,10 @@ public class Connector implements IMSender {
             future.complete(false);
         }
         return future;
+    }
+
+    public CompletableFuture<Boolean> restart(InetSocketAddress address){
+        return start(address);
     }
 
 

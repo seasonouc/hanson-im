@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<SplitPane dividerPositions="0.7087719298245614" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="248.0" prefWidth="366.0" xmlns="http://javafx.com/javafx/8.0.161" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hanson.im.client.ui.controller.LoginViewController">
+  <items>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+         <children>
+            <ImageView fitHeight="21.0" fitWidth="30.0" layoutX="335.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" />
+            <Label layoutX="49.0" layoutY="53.0" prefHeight="32.0" prefWidth="66.0" text="user name" />
+            <Label layoutX="55.0" layoutY="102.0" text="password" />
+            <TextField fx:id="userId" layoutX="115.0" layoutY="58.0" />
+            <TextField fx:id="password" accessibleRole="PASSWORD_FIELD" layoutX="115.0" layoutY="98.0" />
+         </children></AnchorPane>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+         <children>
+            <Button fx:id="login" layoutX="88.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#onLogin" prefHeight="32.0" prefWidth="77.0" text="login" />
+            <Button fx:id="register" layoutX="190.0" layoutY="14.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="77.0" text="register" />
+         </children></AnchorPane>
+  </items>
+</SplitPane>

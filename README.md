@@ -31,7 +31,7 @@ this is about tow nodes communication,what about three?four? or more?
 
 we can use the algorithm in another way!
 
-if we have a group of three people,we can exchange the key like this way
+For example,if we have a group of three people,we can exchange the key like this way
 
 **1.the first stage**
 

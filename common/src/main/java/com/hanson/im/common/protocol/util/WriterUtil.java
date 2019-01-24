@@ -18,6 +18,10 @@ import java.util.Set;
 public class WriterUtil {
 
     public static void writeString(String string, ByteBuf byteBuf) {
+        if (string == null) {
+            byteBuf.writeInt(0);
+            return;
+        }
         byte[] bytes = string.getBytes();
         byteBuf.writeInt(bytes.length);
         byteBuf.writeBytes(bytes);
@@ -25,6 +29,7 @@ public class WriterUtil {
 
     public static String readString(ByteBuf byteBuf) {
         int length = byteBuf.readInt();
+        if (length == 0) return null;
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes, 0, length);
         return new String(bytes);

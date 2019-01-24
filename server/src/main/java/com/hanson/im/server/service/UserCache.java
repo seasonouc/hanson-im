@@ -1,7 +1,7 @@
 package com.hanson.im.server.service;
 
 import com.hanson.im.server.model.User;
-import com.hanson.im.server.user.UserInfo;
+import com.hanson.im.common.protocol.body.UserInfo;
 
 import java.util.List;
 

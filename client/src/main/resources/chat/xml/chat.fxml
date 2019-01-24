@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<SplitPane dividerPositions="0.7926421404682275" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.161" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hanson.im.client.ui.controller.ChatViewController">
+  <items>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+         <children>
+            <SplitPane dividerPositions="0.7185929648241206" orientation="VERTICAL" prefHeight="400.0" prefWidth="471.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                     <children>
+                        <SplitPane dividerPositions="0.099644128113879" orientation="VERTICAL" prefHeight="283.0" prefWidth="471.0">
+                          <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                 <children>
+                                    <Label fx:id="chatName" layoutX="9.0" layoutY="5.0" text="name" />
+                                    <Label fx:id="chatId" layoutX="66.0" layoutY="5.0" text="id" />
+                                    <ImageView fitHeight="25.0" fitWidth="33.0" layoutX="436.0" layoutY="-3.0" onMouseClicked="#close" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../img/close_1.png" />
+                                       </image></ImageView>
+                                    <ImageView fitHeight="25.0" fitWidth="33.0" layoutX="403.0" pickOnBounds="true" preserveRatio="true" />
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                 <children>
+                                    <ScrollPane layoutX="-3.0" prefHeight="250.0" prefWidth="478.0">
+                                       <content>
+                                          <TextArea fx:id="chatRecord" prefHeight="250.0" prefWidth="475.0" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="96.0" prefWidth="344.0">
+                     <children>
+                        <SplitPane dividerPositions="0.8650963597430407" prefHeight="109.0" prefWidth="469.0">
+                          <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="107.0" prefWidth="292.0">
+                                 <children>
+                                    <TextArea fx:id="sendContent" prefHeight="109.0" prefWidth="401.0" />
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="107.0" prefWidth="160.0">
+                                 <children>
+                                    <Button fx:id="sendBtn" layoutX="-2.0" layoutY="54.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="53.0" prefWidth="67.0" text="send" />
+                                    <Button fx:id="clearBtn" layoutY="-4.0" mnemonicParsing="false" onMouseClicked="#clearSend" prefHeight="59.0" prefWidth="60.0" text="clear" />
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </children></AnchorPane>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+         <children>
+            <TabPane layoutX="-1.0" layoutY="-1.0" prefHeight="400.0" prefWidth="121.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="chat">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView fx:id="chatList" prefHeight="371.0" prefWidth="121.0" />
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="users">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView fx:id="userList" layoutX="-3.0" prefHeight="373.0" prefWidth="121.0" />
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </children></AnchorPane>
+  </items>
+</SplitPane>

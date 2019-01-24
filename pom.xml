@@ -14,6 +14,7 @@
         <module>client</module>
         <module>server-common</module>
         <module>gateway</module>
+        <module>benchmark</module>
     </modules>
 
     <parent>

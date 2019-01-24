@@ -1,11 +1,12 @@
-package com.hanson.im.client.chat;
+package com.hanson.im.client.logic;
 
-import com.hanson.im.client.ClientConfig;
+import com.hanson.im.client.config.ClientConfig;
 import com.hanson.im.client.handler.BuildChannelListenner;
 import com.hanson.im.client.handler.IMReceiver;
 import com.hanson.im.client.handler.IMSender;
 import com.hanson.im.client.handler.MessageAcceptor;
 import com.hanson.im.client.network.tcp.Connector;
+import com.hanson.im.client.ui.base.ShowMessage;
 import com.hanson.im.common.cryption.Cryptor;
 import com.hanson.im.common.exception.EncryptionException;
 import com.hanson.im.common.protocol.Message;
@@ -29,18 +30,38 @@ import java.util.concurrent.CompletableFuture;
  * @Description:
  */
 @Slf4j
-public class Controller implements IMSender, IStatus {
+public class LogicController implements IMSender, IStatus {
+
+    private static LogicController controller = new LogicController();
+
+    public static LogicController getController() {
+        return controller;
+    }
 
     /**
      * use it to send message
      */
     private IMSender imSender;
 
+    /**
+     * my user id
+     */
     private String myId;
 
+    /**
+     * my user name
+     */
     private String myName;
 
+    /**
+     * login status
+     */
     private boolean login;
+
+    /**
+     *
+     */
+    private boolean connected;
 
     /**
      * http server address
@@ -73,7 +94,9 @@ public class Controller implements IMSender, IStatus {
      */
     private BuildChannelListenner listenner;
 
-    public Controller() {
+    private EventListener eventListener;
+
+    public LogicController() {
 
         chatCache = new HashMap<>();
         cryptorCache = new HashMap<>();
@@ -93,6 +116,7 @@ public class Controller implements IMSender, IStatus {
     public void connect() {
         connector.start(address).whenComplete((result, error) -> {
             if (result) {
+                connected = true;
                 log.info("connecting the server success");
             } else {
                 log.error("connection the server failed");
@@ -111,8 +135,10 @@ public class Controller implements IMSender, IStatus {
      * @param userList
      */
     public CompletableFuture<Boolean> buildEncryptChannle(List<String> userList) {
-        CompletableFuture<String> future = new CompletableFuture<>();
         log.info("build encrypt channel with {}", userList);
+        if (userList == null | userList.size() == 0) {
+            return new CompletableFuture<>();
+        }
         Message message = new Message();
 
         MessageHeader header = new MessageHeader();
@@ -206,8 +232,17 @@ public class Controller implements IMSender, IStatus {
             log.error("encrypt message error:{}", e.getMessage());
         }
         encryptText.setSessionId(sessionId);
+        encryptText.setUserName(myName);
         body.setData(encryptText, EncryptText.class);
         message.setBody(body);
+
+        ShowMessage showMessage = new ShowMessage();
+        showMessage.setContent(text);
+        showMessage.setSenderId(sessionId);
+        showMessage.setSenderId(myId);
+        showMessage.setUserName(myName);
+
+        MessageCache.getMessageCache().addMeesage(sessionId,showMessage);
 
         return imSender.send(message);
     }
@@ -222,8 +257,16 @@ public class Controller implements IMSender, IStatus {
         return time.toString() + random.nextInt();
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     public void setListenner(BuildChannelListenner listenner) {
         this.listenner = listenner;
+    }
+
+    public void setEventListener(EventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
     @Override
@@ -252,7 +295,27 @@ public class Controller implements IMSender, IStatus {
     }
 
     @Override
-    public void buildChannel(String userId) {
-        this.listenner.buildChannle(userId);
+    public void buildChannel(String sessionId) {
+        eventListener.buildChannelCall(sessionId);
+    }
+
+    @Override
+    public void loginBack(boolean result, int code) {
+        if (result) {
+            log.info("login success");
+        } else {
+            log.info("login failed");
+        }
+        eventListener.loginCall(result);
+    }
+
+    @Override
+    public void disconnect() {
+        log.error("disconnect with server call back");
+    }
+
+    @Override
+    public void receiveMessage(Message message) {
+        eventListener.receivCall(message);
     }
 }

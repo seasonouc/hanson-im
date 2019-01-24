@@ -24,6 +24,7 @@ public class UserServiceImpl implements UserService{
         User user = new User();
         user.setUserId(registerUserReqVO.getUserId());
         user.setUserName(registerUserReqVO.getUserName());
+        user.setUserPassword(registerUserReqVO.getPassword());
 
         userMapper.insertSelective(user);
     }

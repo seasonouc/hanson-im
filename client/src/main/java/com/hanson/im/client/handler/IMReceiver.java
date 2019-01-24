@@ -10,4 +10,6 @@ import com.hanson.im.common.protocol.Message;
 public interface IMReceiver{
 
     void receive(Message message);
+
+    void disconnect();
 }

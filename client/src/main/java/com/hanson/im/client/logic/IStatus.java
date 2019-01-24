@@ -1,4 +1,6 @@
-package com.hanson.im.client.chat;
+package com.hanson.im.client.logic;
+
+import com.hanson.im.common.protocol.Message;
 
 /**
  * @author hanson
@@ -15,4 +17,10 @@ public interface IStatus {
     String getMyName();
 
     void buildChannel(String userId);
+
+    void loginBack(boolean result,int code);
+
+    void disconnect();
+
+    void receiveMessage(Message message);
 }

@@ -1,14 +1,13 @@
 package com.hanson.im.server.controller;
 
 import com.hanson.im.common.vo.req.RegisterUserReqVO;
-import com.hanson.im.common.vo.res.RegisterUserResVO;
-import com.hanson.im.common.vo.res.ReponseVO;
+import com.hanson.im.common.vo.res.ResponseVO;
 import com.hanson.im.server.service.UserCache;
 import com.hanson.im.server.service.UserService;
-import com.hanson.im.server.user.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * @author hanson
@@ -26,18 +25,18 @@ public class UserController {
     private UserCache userCache;
 
     @RequestMapping(value = "/getOnlineUser",method = RequestMethod.GET)
-    public ReponseVO getOnlineUser(){
-        ReponseVO reponseVO = new ReponseVO();
-        reponseVO.setCode(200);
-        reponseVO.setMsg("success");
-        reponseVO.setData(userCache.getOnlineUser());
+    public ResponseVO getOnlineUser(){
+        ResponseVO responseVO = new ResponseVO();
+        responseVO.setCode(200);
+        responseVO.setMsg("success");
+        responseVO.setData(userCache.getOnlineUser());
 
-        return reponseVO;
+        return responseVO;
     }
 
-    @RequestMapping(value = "registerUser",method = RequestMethod.POST)
-    public ReponseVO registerUser(@RequestBody RegisterUserReqVO registerUserReqVO){
-        ReponseVO responseVO = new ReponseVO<>();
+    @RequestMapping(value = "/registerUser",method = RequestMethod.POST)
+    public ResponseVO registerUser(@RequestBody @Valid RegisterUserReqVO registerUserReqVO){
+        ResponseVO responseVO = new ResponseVO<>();
         try {
             userService.insertUser(registerUserReqVO);
             responseVO.setMsg("success");

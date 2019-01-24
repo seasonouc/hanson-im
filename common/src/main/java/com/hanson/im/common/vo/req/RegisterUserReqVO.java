@@ -1,9 +1,6 @@
 package com.hanson.im.common.vo.req;
 
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.validation.constraints.NotNull;
 
 /**
@@ -19,6 +16,19 @@ public class RegisterUserReqVO {
 
     @NotNull(message = "user name can not be null")
     private String userName;
+
+    @NotNull(message = "user password is null")
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
 
     public String getUserId() {
         return userId;

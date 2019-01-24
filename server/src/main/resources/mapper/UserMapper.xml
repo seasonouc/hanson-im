@@ -5,12 +5,13 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_password" property="userPassword" jdbcType="VARCHAR" />
     <result column="user_type" property="userType" jdbcType="TINYINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, user_name, user_type, create_time, update_time
+    id, user_id, user_name, user_password, user_type, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -30,11 +31,11 @@
   </delete>
   <insert id="insert" parameterType="com.hanson.im.server.model.User" >
     insert into users (id, user_id, user_name, 
-      user_type, create_time, update_time
-      )
+      user_password, user_type, create_time, 
+      update_time)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
-      #{userType,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+      #{userPassword,jdbcType=VARCHAR}, #{userType,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.hanson.im.server.model.User" >
     insert into users
@@ -47,6 +48,9 @@
       </if>
       <if test="userName != null" >
         user_name,
+      </if>
+      <if test="userPassword != null" >
+        user_password,
       </if>
       <if test="userType != null" >
         user_type,
@@ -68,6 +72,9 @@
       <if test="userName != null" >
         #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="userPassword != null" >
+        #{userPassword,jdbcType=VARCHAR},
+      </if>
       <if test="userType != null" >
         #{userType,jdbcType=TINYINT},
       </if>
@@ -88,6 +95,9 @@
       <if test="userName != null" >
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="userPassword != null" >
+        user_password = #{userPassword,jdbcType=VARCHAR},
+      </if>
       <if test="userType != null" >
         user_type = #{userType,jdbcType=TINYINT},
       </if>
@@ -104,6 +114,7 @@
     update users
     set user_id = #{userId,jdbcType=VARCHAR},
       user_name = #{userName,jdbcType=VARCHAR},
+      user_password = #{userPassword,jdbcType=VARCHAR},
       user_type = #{userType,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}

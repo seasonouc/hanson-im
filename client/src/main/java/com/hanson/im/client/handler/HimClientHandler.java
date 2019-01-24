@@ -46,9 +46,18 @@ public class HimClientHandler extends SimpleChannelInboundHandler<Message> {
     }
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx){
+        log.error("lost connection with server");
+        imReceiver.disconnect();
+        ctx.close();
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
         cause.printStackTrace();
     }
+
+
 
     public void setImReceiver(IMReceiver imReceiver){
         this.imReceiver = imReceiver;

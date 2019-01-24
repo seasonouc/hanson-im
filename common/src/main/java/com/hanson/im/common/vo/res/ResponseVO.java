@@ -5,7 +5,7 @@ package com.hanson.im.common.vo.res;
  * @Date 2019/1/16
  * @Description:
  */
-public class ReponseVO<T> {
+public class ResponseVO<T> {
 
 
     private T data;

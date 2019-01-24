@@ -1,8 +1,8 @@
 package com.hanson.im.client.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hanson.im.client.ClientConfig;
-import com.hanson.im.client.chat.IStatus;
+import com.hanson.im.client.config.ClientConfig;
+import com.hanson.im.client.logic.IStatus;
 import com.hanson.im.common.cryption.Cryptor;
 import com.hanson.im.common.exception.DecryptionException;
 import com.hanson.im.common.protocol.*;
@@ -25,11 +25,6 @@ import java.util.*;
 public class MessageAcceptor implements IMReceiver {
 
     /**
-     * my user id
-     */
-    private String myId;
-
-    /**
      * store the chat user set in one chat
      */
     private Map<String, Set<String>> chatCache;
@@ -43,7 +38,7 @@ public class MessageAcceptor implements IMReceiver {
 
     private IStatus iStatus;
 
-    public MessageAcceptor(IStatus iStatus,IMSender imSender, Map<String, Set<String>> chatCache, Map<String, Cryptor> cryptorCache) {
+    public MessageAcceptor(IStatus iStatus, IMSender imSender, Map<String, Set<String>> chatCache, Map<String, Cryptor> cryptorCache) {
         this.iStatus = iStatus;
         this.imSender = imSender;
         this.chatCache = chatCache;
@@ -61,6 +56,7 @@ public class MessageAcceptor implements IMReceiver {
                 log.info("login status code:{},message:{}", response.getCode(), response.getContent());
                 if (ResponseEnum.getFromCode(response.getCode()) == ResponseEnum.SUCESS) {
                     iStatus.setLogin(true);
+                    iStatus.loginBack(true, 200);
                     log.info("login success");
                 } else {
                     iStatus.setLogin(false);
@@ -101,20 +97,27 @@ public class MessageAcceptor implements IMReceiver {
                 break;
             case ENCRYPT_TEXT_MSG:
                 EncryptText encryptText = (EncryptText) body.getData();
-                sessionId =  encryptText.getSessionId();
+                sessionId = encryptText.getSessionId();
                 cryptor = cryptorCache.get(sessionId);
-                if(cryptor != null){
+                if (cryptor != null) {
                     try {
                         String content = cryptor.decryptString(encryptText.getContent());
-                        log.debug("receive text:{}",content);
+                        encryptText.setContent(content);
+                        iStatus.receiveMessage(message);
+                        log.debug("receive text:{}", content);
                     } catch (DecryptionException e) {
-                        log.error("decrypt error:{}",e.getMessage());
+                        log.error("decrypt error:{}", e.getMessage());
                     }
                 }
                 break;
             default:
                 log.error("un handle message ");
         }
+    }
+
+    @Override
+    public void disconnect() {
+
     }
 
     /**
@@ -138,11 +141,11 @@ public class MessageAcceptor implements IMReceiver {
                 if (set.size() >= joinNumbser) {
                     return;
                 }
-                if (!set.contains(myId)) {
+                if (!set.contains(iStatus.getMyId())) {
                     if (set.size() == joinNumbser - 1) {
                         BigInteger finalKey = cryptor.addExchangeKey(key);
                         cryptor.setCypherKey(finalKey);
-                        chatCache.put(session,joinSet);
+                        chatCache.put(session, joinSet);
                         iStatus.buildChannel(session);
                     } else {
                         BigInteger processKey = cryptor.addExchangeKey(key);

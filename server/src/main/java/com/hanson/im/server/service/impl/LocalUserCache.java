@@ -2,7 +2,7 @@ package com.hanson.im.server.service.impl;
 
 import com.hanson.im.server.model.User;
 import com.hanson.im.server.service.UserCache;
-import com.hanson.im.server.user.UserInfo;
+import com.hanson.im.common.protocol.body.UserInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
