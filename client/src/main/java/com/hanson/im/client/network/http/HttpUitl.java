@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hanson.im.client.config.ClientConfig;
 import com.hanson.im.common.protocol.body.UserInfo;
+import com.hanson.im.common.vo.req.RegisterUserReqVO;
 import com.hanson.im.common.vo.res.ResponseVO;
 import com.hanson.im.common.vo.res.UserInfoResVo;
 import lombok.extern.slf4j.Slf4j;
@@ -93,5 +94,17 @@ public class HttpUitl {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean registUser(RegisterUserReqVO registerUserReqVO){
+        String registString = JSONObject.toJSONString(registerUserReqVO);
+        try {
+            String res = post(registString,"/v1//registerUser");
+            ResponseVO responseVO = JSONObject.parseObject(res,ResponseVO.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

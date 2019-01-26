@@ -16,22 +16,27 @@
                      <children>
                         <SplitPane dividerPositions="0.099644128113879" orientation="VERTICAL" prefHeight="283.0" prefWidth="471.0">
                           <items>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" style="-fx-background-color: #4B0082; -fx-border-color: #000000;">
                                  <children>
-                                    <Label fx:id="chatName" layoutX="9.0" layoutY="5.0" text="name" />
-                                    <Label fx:id="chatId" layoutX="66.0" layoutY="5.0" text="id" />
-                                    <ImageView fitHeight="25.0" fitWidth="33.0" layoutX="436.0" layoutY="-3.0" onMouseClicked="#close" pickOnBounds="true" preserveRatio="true">
+                                    <Label fx:id="chatName" layoutX="9.0" layoutY="5.0" text="name" textFill="WHITE" />
+                                    <Label fx:id="chatId" contentDisplay="TOP" layoutX="66.0" layoutY="5.0" style="-fx-background-color: #4B0082;" text="id" visible="false" />
+                                    <ImageView fx:id="closeBtn" fitHeight="25.0" fitWidth="33.0" layoutX="436.0" layoutY="-3.0" onMouseClicked="#close" onMouseEntered="#closeEnter" onMouseExited="#closeExit" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../img/close_1.png" />
                                        </image></ImageView>
                                     <ImageView fitHeight="25.0" fitWidth="33.0" layoutX="403.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="minBtn" fitHeight="25.0" fitWidth="25.0" layoutX="407.0" layoutY="-3.0" onMouseClicked="#minimum" onMouseEntered="#minEnter" onMouseExited="#minExit" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../img/min_1.png" />
+                                       </image>
+                                    </ImageView>
                                  </children>
                               </AnchorPane>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
                                     <ScrollPane layoutX="-3.0" prefHeight="250.0" prefWidth="478.0">
                                        <content>
-                                          <TextArea fx:id="chatRecord" prefHeight="250.0" prefWidth="475.0" />
+                                          <TextArea fx:id="chatRecord" disable="true" prefHeight="250.0" prefWidth="475.0" style="-fx-background-color: #C5C1AA;" />
                                        </content>
                                     </ScrollPane>
                                  </children>
@@ -46,7 +51,7 @@
                           <items>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="107.0" prefWidth="292.0">
                                  <children>
-                                    <TextArea fx:id="sendContent" prefHeight="109.0" prefWidth="401.0" />
+                                    <TextArea fx:id="sendContent" prefHeight="109.0" prefWidth="401.0" style="-fx-background-color: #CAFF70;" />
                                  </children>
                               </AnchorPane>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="107.0" prefWidth="160.0">
@@ -64,7 +69,7 @@
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
          <children>
-            <TabPane layoutX="-1.0" layoutY="-1.0" prefHeight="400.0" prefWidth="121.0" tabClosingPolicy="UNAVAILABLE">
+            <TabPane layoutX="-1.0" layoutY="-1.0" prefHeight="400.0" prefWidth="121.0" style="-fx-background-color: #4B0082; -fx-blend-mode: #4B0082;" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="chat">
                   <content>

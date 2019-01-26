@@ -41,6 +41,9 @@ public class UserListController implements Initializable{
     }
 
     public void refeshUserList(List<UserInfo> userList) {
+        if(userList == null||userList.size() == 0){
+            return;
+        }
         StageController stageController = UiBaseService.INSTANCE.getStageController();
         ControlledStage chatViewController = stageController.getController(R.id.ChatView);
         Stage statge = chatViewController.getMyStage();
@@ -48,6 +51,9 @@ public class UserListController implements Initializable{
         ListView<Node> listView = (ListView<Node>) statge.getScene().getRoot().lookup("#userList");
 
         userList.forEach(user -> {
+            if(user.getId().equals(LogicController.getController().getMyId())){
+                return;
+            }
             Pane userPanel = stageController.load(R.layout.UserView, Pane.class);
             Label userId = (Label) userPanel.lookup("#id");
             Label userName = (Label) userPanel.lookup("#userName");
@@ -60,7 +66,7 @@ public class UserListController implements Initializable{
 
     private void bindDoubleClick(ListView<Node> list){
         list.setOnMouseClicked(event->{
-            if(event.getClickCount() >= 0){
+            if(event.getClickCount() >= 2){
                 ListView<Node> view = ( ListView<Node>)event.getSource();
                 Node item = view.getSelectionModel().getSelectedItem();
                 if(item == null){

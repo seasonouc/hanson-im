@@ -31,8 +31,11 @@ public class Starter  extends Application{
 
         Stage registerStage = stageController.loadStage(R.id.RegisterView,R.layout.RegisterView,StageStyle.UNDECORATED);
         registerStage.setTitle("register");
+        stageController.addStage(R.id.RegisterView,registerStage);
+
         Stage chatStage = stageController.loadStage(R.id.ChatView,R.layout.ChatView,StageStyle.UNDECORATED);
         chatStage.setTitle("chat");
+        stageController.addStage(R.id.ChatView,chatStage);
 
         Stage loginStage = stageController.loadStage(R.id.LoginView,R.layout.LoginView, StageStyle.UNDECORATED);
         loginStage.setTitle("login");

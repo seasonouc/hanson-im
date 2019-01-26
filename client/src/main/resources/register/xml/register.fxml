@@ -4,19 +4,21 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane dividerPositions="0.7135678391959799" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="241.0" prefWidth="369.0" xmlns="http://javafx.com/javafx/8.0.161" xmlns:fx="http://javafx.com/fxml/1">
+<SplitPane dividerPositions="0.7135678391959799" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="241.0" prefWidth="369.0" xmlns="http://javafx.com/javafx/8.0.161" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hanson.im.client.ui.controller.RegisterViewController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
          <children>
             <Label layoutX="75.0" layoutY="35.0" text="userName" />
             <Label layoutX="89.0" layoutY="77.0" text="userId" />
             <TextField fx:id="userName" layoutX="144.0" layoutY="31.0" />
-            <PasswordField fx:id="password" layoutX="144.0" layoutY="73.0" />
+            <PasswordField fx:id="password" layoutX="144.0" layoutY="112.0" />
+            <Label layoutX="77.0" layoutY="116.0" text="password" />
+            <TextField fx:id="userId" accessibleRole="PASSWORD_FIELD" layoutX="144.0" layoutY="73.0" />
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
          <children>
-            <Button layoutX="79.0" layoutY="13.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="64.0" text="back" />
-            <Button layoutX="219.0" layoutY="13.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="64.0" text="register" />
+            <Button fx:id="back" layoutX="79.0" layoutY="13.0" mnemonicParsing="false" onMouseClicked="#backToLogin" prefHeight="39.0" prefWidth="64.0" text="back" />
+            <Button fx:id="register" layoutX="219.0" layoutY="13.0" mnemonicParsing="false" onMouseClicked="#onRegister" prefHeight="39.0" prefWidth="64.0" text="register" />
          </children></AnchorPane>
   </items>
 </SplitPane>

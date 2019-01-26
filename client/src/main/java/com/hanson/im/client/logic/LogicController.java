@@ -17,6 +17,7 @@ import com.hanson.im.common.protocol.body.EncryptText;
 import com.hanson.im.common.protocol.body.ExchangeEncryptKey;
 import com.hanson.im.common.protocol.body.ExchangeKeySet;
 import com.hanson.im.common.protocol.body.LoginRequest;
+import com.hanson.im.common.utils.HashUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigInteger;
@@ -75,6 +76,11 @@ public class LogicController implements IMSender, IStatus {
     private Map<String, Set<String>> chatCache;
 
     /**
+     * cache the hash session
+     */
+    private Map<String,String> hashToSession;
+
+    /**
      * store the cryptor in one chat
      */
     private Map<String, Cryptor> cryptorCache;
@@ -96,8 +102,10 @@ public class LogicController implements IMSender, IStatus {
 
     private EventListener eventListener;
 
+
     public LogicController() {
 
+        hashToSession = new HashMap<>();
         chatCache = new HashMap<>();
         cryptorCache = new HashMap<>();
         imReceiver = new MessageAcceptor(this, this, chatCache, cryptorCache);
@@ -139,6 +147,14 @@ public class LogicController implements IMSender, IStatus {
         if (userList == null | userList.size() == 0) {
             return new CompletableFuture<>();
         }
+        String hash = HashUtil.getHashUtil().md5(userList);
+        if(hashToSession.containsKey(hash)){
+            return new CompletableFuture<>();
+        }
+
+        String sessionId = generateSessionId();
+        hashToSession.put(hash,sessionId);
+
         Message message = new Message();
 
         MessageHeader header = new MessageHeader();
@@ -154,7 +170,7 @@ public class LogicController implements IMSender, IStatus {
         cryptor.initPublicKey();
         cryptor.initPrivateKey();
 
-        String sessionId = generateSessionId();
+
 
         cryptorCache.put(sessionId, cryptor);
 
@@ -253,8 +269,8 @@ public class LogicController implements IMSender, IStatus {
 
     public String generateSessionId() {
         Long time = System.currentTimeMillis();
-        Random random = new Random(100);
-        return time.toString() + random.nextInt();
+        int randNumber = (int)(Math.random()*1000);
+        return time.toString() + randNumber;
     }
 
     public boolean isConnected() {
