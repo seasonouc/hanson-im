@@ -74,9 +74,14 @@ public class UserListController implements Initializable{
                 }
                 Pane pane = (Pane)item;
                 Label userId = (Label)pane.lookup("#id");
+                Label userName = (Label)pane.lookup("#userName");
                 String id = userId.getText();
-                List<String> userIds = new ArrayList<>();
-                userIds.add(id);
+                String name = userName.getText();
+                UserInfo userInfo = new UserInfo();
+                userInfo.setUserName(name);
+                userInfo.setId(id);
+                List<UserInfo> userIds = new ArrayList<>();
+                userIds.add(userInfo);
                 LogicController.getController().buildEncryptChannle(userIds);
             }
         });

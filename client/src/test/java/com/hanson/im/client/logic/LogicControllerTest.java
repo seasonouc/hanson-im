@@ -1,6 +1,7 @@
 package com.hanson.im.client.logic;
 
 import com.hanson.im.client.handler.BuildChannelListenner;
+import com.hanson.im.common.protocol.body.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -79,8 +80,11 @@ public class LogicControllerTest {
         });
 
         if (logicController1.getLogin() && logicController2.getLogin()) {
-            List<String> userList = new ArrayList<>();
-            userList.add("456");
+            List<UserInfo> userList = new ArrayList<>();
+            UserInfo userInfo = new UserInfo();
+            userInfo.setId("456");
+            userInfo.setUserName("hanson");
+            userList.add(userInfo);
             logicController1.buildEncryptChannle(userList).whenComplete((result, error)->{
                 log.info("controller1 send build mesasge result:{}",result);
             });

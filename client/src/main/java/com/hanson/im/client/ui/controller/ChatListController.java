@@ -38,8 +38,8 @@ public class ChatListController {
 
         ListView<Node> listView = (ListView<Node>) statge.getScene().getRoot().lookup("#chatList");
 
-        Pane userPanel = stageController.load(R.layout.UserView, Pane.class);
-        Label userId = (Label) userPanel.lookup("#id");
+        Pane userPanel = stageController.load(R.layout.ChatterView, Pane.class);
+        Label userId = (Label) userPanel.lookup("#userId");
         Label userName = (Label) userPanel.lookup("#userName");
         userId.setText(user.getId());
         userName.setText(user.getUserName());
@@ -47,8 +47,10 @@ public class ChatListController {
 
         userPanel.setOnMouseClicked(event -> {
             if (event.getClickCount() >= 1) {
-                Label label = (Label) statge.getScene().getRoot().lookup("#chatId");
-                label.setText(user.getId());
+                Label idLabel = (Label) statge.getScene().getRoot().lookup("#chatId");
+                Label nameLabel = (Label) statge.getScene().getRoot().lookup("#chatName");
+                idLabel.setText(user.getId());
+                nameLabel.setText(user.getUserName());
                 loadMessage(user.getId());
             }
         });

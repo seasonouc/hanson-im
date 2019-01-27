@@ -4,9 +4,10 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<FlowPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="68.0" xmlns="http://javafx.com/javafx/8.0.161" xmlns:fx="http://javafx.com/fxml/1">
+<FlowPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="33.0" prefWidth="85.0" xmlns="http://javafx.com/javafx/8.0.161" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="userName" text="user" />
-      <Label fx:id="id" text="id" />
+      <Label fx:id="userName" prefHeight="15.0" prefWidth="81.0" text="user" />
+      <CheckBox fx:id="chooseBox" mnemonicParsing="false" prefHeight="16.0" prefWidth="43.0" />
+      <Label fx:id="id" text="id" visible="false" />
    </children>
 </FlowPane>

@@ -32,5 +32,10 @@ public class R {
          * register
          */
         public static final String RegisterView = "register/xml/register.fxml";
+
+        /**
+         * chatter
+         */
+        public static final String ChatterView = "chat/xml/chatter.fxml";
     }
 }

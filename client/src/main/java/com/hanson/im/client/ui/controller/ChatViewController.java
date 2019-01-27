@@ -7,12 +7,19 @@ import com.hanson.im.client.ui.R;
 import com.hanson.im.client.ui.StageController;
 import com.hanson.im.client.ui.base.ResourceContainer;
 import com.hanson.im.client.ui.base.UiBaseService;
+import com.hanson.im.common.protocol.body.UserInfo;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -100,5 +107,25 @@ public class ChatViewController implements ControlledStage, MessageAppender {
     public void minExit() {
         Image image = ResourceContainer.getMin_1();
         minBtn.setImage(image);
+    }
+
+    @FXML
+    public void groupClick(){
+        List<UserInfo> chatList = new ArrayList<>();
+        Stage stage = getMyStage();
+        ListView<Node> listView = (ListView<Node>) stage.getScene().getRoot().lookup("#userList");
+        listView.getItems().forEach(node -> {
+
+            CheckBox chooseBox = (CheckBox)node.lookup("#chooseBox");
+            if(chooseBox.isSelected()){
+                Label idLabel = (Label) node.lookup("#id");
+                Label nameLabel = (Label) node.lookup("#userName");
+                UserInfo userInfo = new UserInfo();
+                userInfo.setUserName(nameLabel.getText());
+                userInfo.setId(idLabel.getText());
+                chatList.add(userInfo);
+            }
+        });
+        LogicController.getController().buildEncryptChannle(chatList);
     }
 }

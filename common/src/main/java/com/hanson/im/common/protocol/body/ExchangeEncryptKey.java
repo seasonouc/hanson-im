@@ -28,6 +28,12 @@ public class ExchangeEncryptKey implements HimSerializer {
      */
     private String sessionId;
 
+
+    /**
+     * chat name
+     */
+    private String name;
+
     /**
      * the collection of exchange keys
      */
@@ -64,6 +70,14 @@ public class ExchangeEncryptKey implements HimSerializer {
         this.version = version;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
     public DiffPubKey getDiffPubKey() {
         return diffPubKey;
@@ -92,6 +106,7 @@ public class ExchangeEncryptKey implements HimSerializer {
     @Override
     public void writeTo(ByteBuf byteBuffer) {
         WriterUtil.writeString(sessionId, byteBuffer);
+        WriterUtil.writeString(name,byteBuffer);
         WriterUtil.writeListString(new ArrayList<>(joinSet), byteBuffer);
 
         diffPubKey.writeTo(byteBuffer);
@@ -102,6 +117,7 @@ public class ExchangeEncryptKey implements HimSerializer {
     @Override
     public void readFrom(ByteBuf byteBuffer) {
         sessionId = WriterUtil.readString(byteBuffer);
+        name = WriterUtil.readString(byteBuffer);
         joinSet = new HashSet<>(WriterUtil.readListString(byteBuffer));
         diffPubKey = new DiffPubKey();
         diffPubKey.readFrom(byteBuffer);

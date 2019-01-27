@@ -1,5 +1,6 @@
 package com.hanson.im.common.utils;
 
+import com.hanson.im.common.protocol.body.UserInfo;
 import sun.security.provider.MD5;
 
 import java.math.BigInteger;
@@ -20,9 +21,9 @@ public class HashUtil {
         return hashUtil;
     }
 
-    public String md5(List<String> list){
+    public String md5(List<UserInfo> list){
         StringBuilder sb = new StringBuilder();
-        list.forEach(str->sb.append(str));
+        list.forEach(user->sb.append(user.getId()));
         String str = sb.toString();
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

@@ -13,10 +13,7 @@ import com.hanson.im.common.protocol.Message;
 import com.hanson.im.common.protocol.MessageBody;
 import com.hanson.im.common.protocol.MessageHeader;
 import com.hanson.im.common.protocol.MessageType;
-import com.hanson.im.common.protocol.body.EncryptText;
-import com.hanson.im.common.protocol.body.ExchangeEncryptKey;
-import com.hanson.im.common.protocol.body.ExchangeKeySet;
-import com.hanson.im.common.protocol.body.LoginRequest;
+import com.hanson.im.common.protocol.body.*;
 import com.hanson.im.common.utils.HashUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,7 +75,7 @@ public class LogicController implements IMSender, IStatus {
     /**
      * cache the hash session
      */
-    private Map<String,String> hashToSession;
+    private Map<String, String> hashToSession;
 
     /**
      * store the cryptor in one chat
@@ -142,24 +139,26 @@ public class LogicController implements IMSender, IStatus {
      *
      * @param userList
      */
-    public CompletableFuture<Boolean> buildEncryptChannle(List<String> userList) {
+    public CompletableFuture<Boolean> buildEncryptChannle(List<UserInfo> userList) {
         log.info("build encrypt channel with {}", userList);
         if (userList == null | userList.size() == 0) {
             return new CompletableFuture<>();
         }
         String hash = HashUtil.getHashUtil().md5(userList);
-        if(hashToSession.containsKey(hash)){
+        if (hashToSession.containsKey(hash)) {
             return new CompletableFuture<>();
         }
 
         String sessionId = generateSessionId();
-        hashToSession.put(hash,sessionId);
+        hashToSession.put(hash, sessionId);
 
         Message message = new Message();
 
         MessageHeader header = new MessageHeader();
         header.setVersion(ClientConfig.version);
-        header.setToList(userList);
+        List<String> idList = new ArrayList<>();
+        userList.forEach(userInfo -> idList.add(userInfo.getId()));
+        header.setToList(idList);
         header.setMessageType(MessageType.KEY_EXCHANGE_TO);
         header.setFrom(myId);
 
@@ -170,8 +169,12 @@ public class LogicController implements IMSender, IStatus {
         cryptor.initPublicKey();
         cryptor.initPrivateKey();
 
-
-
+        StringBuilder nameSb = new StringBuilder();
+        for (int i = 0; i < userList.size() & i < 3; i++) {
+            nameSb.append(userList.get(i).getUserName());
+            nameSb.append("&");
+        }
+        exchangeEncryptKey.setName(nameSb.toString());
         cryptorCache.put(sessionId, cryptor);
 
         exchangeEncryptKey.setDiffPubKey(cryptor.getPubKey());
@@ -188,7 +191,7 @@ public class LogicController implements IMSender, IStatus {
         exchangeKeySetList.add(exchangeKeySet);
         exchangeEncryptKey.setExchangeKeySetList(exchangeKeySetList);
 
-        Set<String> joinSet = new HashSet<>(userList);
+        Set<String> joinSet = new HashSet<>(idList);
         joinSet.add(myId);
         exchangeEncryptKey.setJoinSet(joinSet);
 
@@ -258,7 +261,7 @@ public class LogicController implements IMSender, IStatus {
         showMessage.setSenderId(myId);
         showMessage.setUserName(myName);
 
-        MessageCache.getMessageCache().addMeesage(sessionId,showMessage);
+        MessageCache.getMessageCache().addMeesage(sessionId, showMessage);
 
         return imSender.send(message);
     }
@@ -269,7 +272,7 @@ public class LogicController implements IMSender, IStatus {
 
     public String generateSessionId() {
         Long time = System.currentTimeMillis();
-        int randNumber = (int)(Math.random()*1000);
+        int randNumber = (int) (Math.random() * 1000);
         return time.toString() + randNumber;
     }
 
@@ -311,8 +314,8 @@ public class LogicController implements IMSender, IStatus {
     }
 
     @Override
-    public void buildChannel(String sessionId) {
-        eventListener.buildChannelCall(sessionId);
+    public void buildChannel(UserInfo userInfo) {
+        eventListener.buildChannelCall(userInfo);
     }
 
     @Override

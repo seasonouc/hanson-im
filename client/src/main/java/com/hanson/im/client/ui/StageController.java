@@ -139,10 +139,7 @@ public class StageController implements EventListener {
     }
 
     @Override
-    public void buildChannelCall(String sessionId) {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setId(sessionId);
-        userInfo.setUserName("hanson");
+    public void buildChannelCall(UserInfo userInfo) {
         Platform.runLater(()->ChatListController.getController().addChatUser(userInfo));
     }
 

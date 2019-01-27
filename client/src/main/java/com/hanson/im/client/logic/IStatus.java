@@ -1,6 +1,7 @@
 package com.hanson.im.client.logic;
 
 import com.hanson.im.common.protocol.Message;
+import com.hanson.im.common.protocol.body.UserInfo;
 
 /**
  * @author hanson
@@ -16,7 +17,7 @@ public interface IStatus {
 
     String getMyName();
 
-    void buildChannel(String userId);
+    void buildChannel(UserInfo userInfo);
 
     void loginBack(boolean result,int code);
 

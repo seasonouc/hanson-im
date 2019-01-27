@@ -6,10 +6,7 @@ import com.hanson.im.client.logic.IStatus;
 import com.hanson.im.common.cryption.Cryptor;
 import com.hanson.im.common.exception.DecryptionException;
 import com.hanson.im.common.protocol.*;
-import com.hanson.im.common.protocol.body.EncryptText;
-import com.hanson.im.common.protocol.body.ExchangeEncryptKey;
-import com.hanson.im.common.protocol.body.ExchangeKeySet;
-import com.hanson.im.common.protocol.body.ServerResponse;
+import com.hanson.im.common.protocol.body.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigInteger;
@@ -143,10 +140,13 @@ public class MessageAcceptor implements IMReceiver {
                 }
                 if (!set.contains(iStatus.getMyId())) {
                     if (set.size() == joinNumbser - 1) {
+                        UserInfo userInfo = new UserInfo();
+                        userInfo.setId(session);
+                        userInfo.setUserName(inputKey.getName());
                         BigInteger finalKey = cryptor.addExchangeKey(key);
                         cryptor.setCypherKey(finalKey);
                         chatCache.put(session, joinSet);
-                        iStatus.buildChannel(session);
+                        iStatus.buildChannel(userInfo);
                     } else {
                         BigInteger processKey = cryptor.addExchangeKey(key);
                         Map<BigInteger, Set<String>> processMap = new HashMap<>();
@@ -165,6 +165,7 @@ public class MessageAcceptor implements IMReceiver {
         outputKey.setExchangeKeySetList(newExchangeKeySetList);
         outputKey.setDiffPubKey(inputKey.getDiffPubKey());
         outputKey.setJoinSet(joinSet);
+        outputKey.setName(inputKey.getName());
 
         return outputKey;
     }

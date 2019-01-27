@@ -36,7 +36,7 @@
                                  <children>
                                     <ScrollPane layoutX="-3.0" prefHeight="250.0" prefWidth="478.0">
                                        <content>
-                                          <TextArea fx:id="chatRecord" disable="true" prefHeight="250.0" prefWidth="475.0" style="-fx-background-color: #C5C1AA;" />
+                                          <TextArea fx:id="chatRecord" disable="true" prefHeight="250.0" prefWidth="475.0" style="-fx-font-size: 20; -fx-background-color: #CAFF70; -fx-border-color: #CAFF70;" />
                                        </content>
                                     </ScrollPane>
                                  </children>
@@ -56,8 +56,9 @@
                               </AnchorPane>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="107.0" prefWidth="160.0">
                                  <children>
-                                    <Button fx:id="sendBtn" layoutX="-2.0" layoutY="54.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="53.0" prefWidth="67.0" text="send" />
-                                    <Button fx:id="clearBtn" layoutY="-4.0" mnemonicParsing="false" onMouseClicked="#clearSend" prefHeight="59.0" prefWidth="60.0" text="clear" />
+                                    <Button fx:id="sendBtn" layoutX="-2.0" layoutY="71.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="36.0" prefWidth="67.0" text="send" />
+                                    <Button fx:id="clearBtn" layoutY="36.0" mnemonicParsing="false" onMouseClicked="#clearSend" prefHeight="36.0" prefWidth="60.0" text="clear" />
+                                    <Button fx:id="groupBtn" layoutX="-2.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#groupClick" prefHeight="36.0" prefWidth="67.0" text="group" />
                                  </children>
                               </AnchorPane>
                           </items>
