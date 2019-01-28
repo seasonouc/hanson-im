@@ -10,6 +10,7 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -38,6 +39,9 @@ public class RegisterViewController implements ControlledStage,Initializable {
 
     @FXML
     private Button back;
+
+    @FXML
+    private Label registerTip;
 
     @Override
     public Stage getMyStage() {
@@ -68,6 +72,12 @@ public class RegisterViewController implements ControlledStage,Initializable {
         registerUserReqVO.setPassword(password.getText());
         registerUserReqVO.setUserName(userName.getText());
 
-        HttpUitl.getHttUtil().registUser(registerUserReqVO);
+        boolean result = HttpUitl.getHttUtil().registUser(registerUserReqVO);
+        if(result){
+            registerTip.setText("success");
+        }else{
+            registerTip.setText("failed");
+        }
+
     }
 }

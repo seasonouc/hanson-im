@@ -38,6 +38,7 @@ public class HimServerChannelHandler extends SimpleChannelInboundHandler<Message
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception{
         log.error("exception caught error:{}",cause.getMessage());
+        handler.userOffline(ctx.channel().id());
         ctx.close();
     }
 

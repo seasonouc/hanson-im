@@ -61,8 +61,8 @@ public class LoginViewController implements ControlledStage, Initializable {
 
     @FXML
     public void onLogin() {
-        LogicController.getController().setIdAndName(userId.getText(), userId.getText());
-        LogicController.getController().login();
+//        LogicController.getController().setIdAndName(userId.getText(), userId.getText());
+        LogicController.getController().login(userId.getText(),password.getText());
     }
 
     @FXML

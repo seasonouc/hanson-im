@@ -95,4 +95,8 @@ public class Connector implements IMSender {
         return future;
     }
 
+    public void logout(){
+        this.channel.close();
+    }
+
 }

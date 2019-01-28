@@ -6,7 +6,7 @@ import com.hanson.im.common.layer.HimSerializer;
 import com.hanson.im.common.protocol.body.EncryptText;
 import com.hanson.im.common.protocol.body.ExchangeEncryptKey;
 import com.hanson.im.common.protocol.body.LoginRequest;
-import com.hanson.im.common.protocol.body.ServerResponse;
+import com.hanson.im.common.protocol.body.LoginResponse;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
@@ -27,14 +27,14 @@ public class MessageBody implements HimSerializer {
         bodyTypeClassMap.put(BodyType.EXCHENGE_KEY, ExchangeEncryptKey.class);
         bodyTypeClassMap.put(BodyType.ENCRYPT_TEXT, EncryptText.class);
         bodyTypeClassMap.put(BodyType.LOING_IN, LoginRequest.class);
-        bodyTypeClassMap.put(BodyType.SERVER_RESPONSE, ServerResponse.class);
+        bodyTypeClassMap.put(BodyType.LOGIN_RESPONSE, LoginResponse.class);
     }
 
     static {
         classBodyTypeMap.put(ExchangeEncryptKey.class,BodyType.EXCHENGE_KEY );
         classBodyTypeMap.put(EncryptText.class,BodyType.ENCRYPT_TEXT);
         classBodyTypeMap.put(LoginRequest.class,BodyType.LOING_IN);
-        classBodyTypeMap.put(ServerResponse.class,BodyType.SERVER_RESPONSE);
+        classBodyTypeMap.put(LoginResponse.class,BodyType.LOGIN_RESPONSE);
     }
 
     private Object data;
@@ -85,6 +85,6 @@ public class MessageBody implements HimSerializer {
         ENCRYPT_TEXT,
         ENCRYPT_PICTURE,
         LOING_IN,
-        SERVER_RESPONSE
+        LOGIN_RESPONSE
     }
 }

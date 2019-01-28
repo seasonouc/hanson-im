@@ -51,6 +51,7 @@ public class ChatViewController implements ControlledStage, MessageAppender {
 
     @FXML
     private void close() {
+        LogicController.getController().logout();
         System.exit(1);
     }
 

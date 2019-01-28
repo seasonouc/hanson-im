@@ -49,11 +49,11 @@ public class MessageAcceptor implements IMReceiver {
         log.debug("receive message {}", JSONObject.toJSONString(message));
         switch (header.getMessageType()) {
             case LOGIN_BACK:
-                ServerResponse response = (ServerResponse) body.getData();
-                log.info("login status code:{},message:{}", response.getCode(), response.getContent());
+                LoginResponse response = (LoginResponse) body.getData();
+                log.info("login status code:{},message:{}", response.getCode(), response.getUserInfo());
                 if (ResponseEnum.getFromCode(response.getCode()) == ResponseEnum.SUCESS) {
                     iStatus.setLogin(true);
-                    iStatus.loginBack(true, 200);
+                    iStatus.loginBack(true, 200,response.getUserInfo());
                     log.info("login success");
                 } else {
                     iStatus.setLogin(false);

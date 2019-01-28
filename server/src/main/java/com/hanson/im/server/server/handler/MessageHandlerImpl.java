@@ -7,6 +7,7 @@ import com.hanson.im.common.protocol.MessageBody;
 import com.hanson.im.common.protocol.MessageHeader;
 import com.hanson.im.common.protocol.MessageType;
 import com.hanson.im.common.protocol.body.LoginRequest;
+import com.hanson.im.common.protocol.body.UserInfo;
 import com.hanson.im.server.model.User;
 import com.hanson.im.server.service.MessageHandler;
 import com.hanson.im.server.service.UserCache;
@@ -56,25 +57,29 @@ public class MessageHandlerImpl implements MessageHandler {
         log.info("receive message :{}", JSONObject.toJSONString(message));
         switch (messageType) {
             case LOGIN_TO:
+                UserInfo userInfo = new UserInfo();
                 if (!(body.getData() instanceof LoginRequest)) {
-                    Message backMessage = MessageBuilder.buildSystemMessage(404, "the login information is error");
+                    Message backMessage = MessageBuilder.buildSystemMessage(404, userInfo);
                     channel.writeAndFlush(backMessage).addListener(ch -> channel.close());
                     return;
                 }
                 LoginRequest loginRequest = (LoginRequest) body.getData();
+                userInfo.setId(loginRequest.getUserId());
                 if (userCache.userIsOnline(loginRequest.getUserId())) {
-                    Message backMessage = MessageBuilder.buildSystemMessage(404, "user is already online,login repeat");
+                    Message backMessage = MessageBuilder.buildSystemMessage(404, userInfo);
                     channel.writeAndFlush(backMessage).addListener(ch -> channel.close());
                     return;
                 } else
                 if (!userVailidator.validateLogin(loginRequest)) {
-                    Message backMessage = MessageBuilder.buildSystemMessage(404, "the login information is error");
-                    channel.writeAndFlush(backMessage).addListener(ch -> channel.close());
+                    Message backMessage = MessageBuilder.buildSystemMessage(404, userInfo);
+                    channel.writeAndFlush(backMessage);
                     log.info("validate user failed,userId:{},userName:{}", loginRequest.getUserId(), loginRequest.getUserName());
                     return;
                 }
                 User user = userService.getUserById(loginRequest.getUserId());
-                channel.writeAndFlush(MessageBuilder.buildSystemMessage(200, "login success"))
+                userInfo.setId(user.getUserId());
+                userInfo.setUserName(user.getUserName());
+                channel.writeAndFlush(MessageBuilder.buildSystemMessage(200, userInfo))
                         .addListener(ch -> {
                             if (ch.isSuccess()) {
                                 channelMap.put(loginRequest.getUserId(), channel);

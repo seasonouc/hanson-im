@@ -24,8 +24,8 @@ public class UserController {
     @Autowired
     private UserCache userCache;
 
-    @RequestMapping(value = "/getOnlineUser",method = RequestMethod.GET)
-    public ResponseVO getOnlineUser(){
+    @RequestMapping(value = "/getOnlineUser", method = RequestMethod.GET)
+    public ResponseVO getOnlineUser() {
         ResponseVO responseVO = new ResponseVO();
         responseVO.setCode(200);
         responseVO.setMsg("success");
@@ -34,21 +34,23 @@ public class UserController {
         return responseVO;
     }
 
-    @RequestMapping(value = "/registerUser",method = RequestMethod.POST)
-    public ResponseVO registerUser(@RequestBody @Valid RegisterUserReqVO registerUserReqVO){
+    @RequestMapping(value = "/registerUser", method = RequestMethod.POST)
+    public ResponseVO registerUser(@RequestBody @Valid RegisterUserReqVO registerUserReqVO) {
         ResponseVO responseVO = new ResponseVO<>();
         try {
             userService.insertUser(registerUserReqVO);
             responseVO.setMsg("success");
             responseVO.setData(registerUserReqVO);
-        }catch (Exception e){
-            responseVO.setMsg(e.getMessage());
+            responseVO.setCode(200);
+        } catch (Exception e) {
+            responseVO.setCode(404);
+            responseVO.setMsg("failed");
         }
         return responseVO;
     }
 
-    @RequestMapping(value="/{path}",method = RequestMethod.GET)
-    public String test(@PathVariable(name = "path") String path){
+    @RequestMapping(value = "/{path}", method = RequestMethod.GET)
+    public String test(@PathVariable(name = "path") String path) {
         return path;
     }
 

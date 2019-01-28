@@ -23,7 +23,9 @@ public class UserVailidatorImpl implements UserVailidator{
 
         User user = userService.getUserById(loginRequest.getUserId());
         if(user != null){
-            return true;
+            if(user.getUserPassword().equals(loginRequest.getPassword())){
+                return true;
+            }
         }
         return false;
     }

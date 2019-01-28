@@ -4,7 +4,8 @@ import com.hanson.im.common.protocol.Message;
 import com.hanson.im.common.protocol.MessageBody;
 import com.hanson.im.common.protocol.MessageHeader;
 import com.hanson.im.common.protocol.MessageType;
-import com.hanson.im.common.protocol.body.ServerResponse;
+import com.hanson.im.common.protocol.body.LoginResponse;
+import com.hanson.im.common.protocol.body.UserInfo;
 
 /**
  * @author hanson
@@ -13,7 +14,7 @@ import com.hanson.im.common.protocol.body.ServerResponse;
  */
 public class MessageBuilder {
 
-    public static Message buildSystemMessage(int code ,String content){
+    public static Message buildSystemMessage(int code , UserInfo userInfo){
         Message backMessage = new Message();
 
         MessageHeader backHeader = new MessageHeader();
@@ -23,8 +24,8 @@ public class MessageBuilder {
         backMessage.setHeader(backHeader);
 
         MessageBody backBody = new MessageBody();
-        ServerResponse response = new ServerResponse(code, content);
-        backBody.setData(response, ServerResponse.class);
+        LoginResponse response = new LoginResponse(code, userInfo);
+        backBody.setData(response, LoginResponse.class);
         backMessage.setBody(backBody);
 
         return backMessage;

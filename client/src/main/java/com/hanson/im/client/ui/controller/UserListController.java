@@ -21,7 +21,7 @@ import java.util.*;
  * @Date 2019/1/22
  * @Description:
  */
-public class UserListController implements Initializable{
+public class UserListController implements Initializable {
 
     private static UserListController controller = new UserListController();
 
@@ -29,19 +29,19 @@ public class UserListController implements Initializable{
         return controller;
     }
 
-    Map<String,UserInfo> userInfoMap = new HashMap<>();
+    Map<String, UserInfo> userInfoMap = new HashMap<>();
 
-    public void refreshUserList(List<UserInfo> userList){
+    public void refreshUserList(List<UserInfo> userList) {
         userInfoMap.clear();
-        userList.forEach(userInfo -> userInfoMap.put(userInfo.getId(),userInfo));
+        userList.forEach(userInfo -> userInfoMap.put(userInfo.getId(), userInfo));
     }
 
-    public UserInfo getUserInfo(String id){
+    public UserInfo getUserInfo(String id) {
         return userInfoMap.get(id);
     }
 
     public void refeshUserList(List<UserInfo> userList) {
-        if(userList == null||userList.size() == 0){
+        if (userList == null || userList.size() == 0) {
             return;
         }
         StageController stageController = UiBaseService.INSTANCE.getStageController();
@@ -49,32 +49,73 @@ public class UserListController implements Initializable{
         Stage statge = chatViewController.getMyStage();
 
         ListView<Node> listView = (ListView<Node>) statge.getScene().getRoot().lookup("#userList");
+        List<Node> viewList = listView.getItems();
+        Set<Integer> idSet = new HashSet<>();
+        Iterator<Node> viewIterator = viewList.iterator();
+        while (viewIterator.hasNext()) {
+            Node node = viewIterator.next();
+            boolean online = false;
+            Label userId = (Label) node.lookup("#id");
+            for (int j = 0; j < userList.size(); j++) {
+                if (userId.getText().equals(userList.get(j).getId())) {
+                    online = true;
+                    idSet.add(j);
+                    break;
+                }
+            }
+            if (!online) {
+                viewIterator.remove();
+            }
+        }
 
-        userList.forEach(user -> {
-            if(user.getId().equals(LogicController.getController().getMyId())){
-                return;
+        for (int i = 0; i < userList.size(); i++) {
+            if (idSet.contains(i)) continue;
+            UserInfo user = userList.get(i);
+            if (user.getId().equals(LogicController.getController().getMyId())) {
+                continue;
             }
             Pane userPanel = stageController.load(R.layout.UserView, Pane.class);
             Label userId = (Label) userPanel.lookup("#id");
             Label userName = (Label) userPanel.lookup("#userName");
             userId.setText(user.getId());
             userName.setText(user.getUserName());
-            listView.getItems().add(userPanel);
-        });
-        bindDoubleClick(listView);
+            viewList.add(userPanel);
+            bindDoubleClick(userPanel);
+        }
+
+//        bindDoubleClick(listView);
     }
 
-    private void bindDoubleClick(ListView<Node> list){
-        list.setOnMouseClicked(event->{
-            if(event.getClickCount() >= 2){
-                ListView<Node> view = ( ListView<Node>)event.getSource();
+    private void bindDoubleClick(Node node) {
+        node.setOnMouseClicked(event -> {
+            if (event.getClickCount() >= 2) {
+
+//                Pane pane = (Pane) node;
+                Label userId = (Label) node.lookup("#id");
+                Label userName = (Label) node.lookup("#userName");
+                String id = userId.getText();
+                String name = userName.getText();
+                UserInfo userInfo = new UserInfo();
+                userInfo.setUserName(name);
+                userInfo.setId(id);
+                List<UserInfo> userIds = new ArrayList<>();
+                userIds.add(userInfo);
+                LogicController.getController().buildEncryptChannle(userIds);
+            }
+        });
+    }
+
+    private void bindDoubleClick(ListView<Node> list) {
+        list.setOnMouseClicked(event -> {
+            if (event.getClickCount() >= 2) {
+                ListView<Node> view = (ListView<Node>) event.getSource();
                 Node item = view.getSelectionModel().getSelectedItem();
-                if(item == null){
+                if (item == null) {
                     return;
                 }
-                Pane pane = (Pane)item;
-                Label userId = (Label)pane.lookup("#id");
-                Label userName = (Label)pane.lookup("#userName");
+                Pane pane = (Pane) item;
+                Label userId = (Label) pane.lookup("#id");
+                Label userName = (Label) pane.lookup("#userName");
                 String id = userId.getText();
                 String name = userName.getText();
                 UserInfo userInfo = new UserInfo();

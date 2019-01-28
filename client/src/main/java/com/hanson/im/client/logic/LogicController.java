@@ -174,6 +174,7 @@ public class LogicController implements IMSender, IStatus {
             nameSb.append(userList.get(i).getUserName());
             nameSb.append("&");
         }
+        nameSb.append(myName);
         exchangeEncryptKey.setName(nameSb.toString());
         cryptorCache.put(sessionId, cryptor);
 
@@ -203,11 +204,11 @@ public class LogicController implements IMSender, IStatus {
     }
 
 
-    public CompletableFuture<Boolean> login() {
+    public CompletableFuture<Boolean> login(String userId,String password) {
         LoginRequest loginRequest = new LoginRequest();
 
-        loginRequest.setUserName(myName);
-        loginRequest.setUserId(myId);
+        loginRequest.setPassword(password);
+        loginRequest.setUserId(userId);
 
         Message message = new Message();
         MessageHeader header = new MessageHeader();
@@ -319,12 +320,13 @@ public class LogicController implements IMSender, IStatus {
     }
 
     @Override
-    public void loginBack(boolean result, int code) {
+    public void loginBack(boolean result, int code,UserInfo userInfo) {
         if (result) {
             log.info("login success");
         } else {
             log.info("login failed");
         }
+        setIdAndName(userInfo.getId(),userInfo.getUserName());
         eventListener.loginCall(result);
     }
 
@@ -333,8 +335,14 @@ public class LogicController implements IMSender, IStatus {
         log.error("disconnect with server call back");
     }
 
+
+
     @Override
     public void receiveMessage(Message message) {
         eventListener.receivCall(message);
+    }
+
+    public void logout(){
+        connector.logout();
     }
 }

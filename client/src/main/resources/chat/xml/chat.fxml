@@ -34,11 +34,7 @@
                               </AnchorPane>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
-                                    <ScrollPane layoutX="-3.0" prefHeight="250.0" prefWidth="478.0">
-                                       <content>
-                                          <TextArea fx:id="chatRecord" disable="true" prefHeight="250.0" prefWidth="475.0" style="-fx-font-size: 20; -fx-background-color: #CAFF70; -fx-border-color: #CAFF70;" />
-                                       </content>
-                                    </ScrollPane>
+                                    <TextArea fx:id="chatRecord" accessibleRole="SCROLL_PANE" disable="true" prefHeight="250.0" prefWidth="475.0" style="-fx-font-size: 20; -fx-background-color: #CAFF70; -fx-border-color: #CAFF70;" />
                                  </children>
                               </AnchorPane>
                           </items>

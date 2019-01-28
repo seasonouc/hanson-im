@@ -22,6 +22,14 @@ public class LoginRequest implements HimSerializer {
      */
     private String userName;
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     private String password;
 
     public LoginRequest() {
@@ -47,13 +55,13 @@ public class LoginRequest implements HimSerializer {
     @Override
     public void writeTo(ByteBuf byteBuffer) throws EncodeException {
         WriterUtil.writeString(userId, byteBuffer);
-        WriterUtil.writeString(userName, byteBuffer);
+        WriterUtil.writeString(password, byteBuffer);
     }
 
     @Override
     public void readFrom(ByteBuf byteBuffer) throws DecodeException {
         userId = WriterUtil.readString(byteBuffer);
-        userName = WriterUtil.readString(byteBuffer);
+        password = WriterUtil.readString(byteBuffer);
 
     }
 }

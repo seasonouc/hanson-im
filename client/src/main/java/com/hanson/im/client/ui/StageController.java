@@ -122,25 +122,41 @@ public class StageController implements EventListener {
     @Override
     public void loginCall(boolean result) {
         Platform.runLater(() -> switchStage(R.id.ChatView, R.id.LoginView));
-        List<UserInfo> list = HttpUitl.getHttUtil().getOnlineUserList();
-        if (list != null&&list.size() != 0)
-        UserListController.getController().refeshUserList(list);
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Platform.runLater(() -> {
+
+                    List<UserInfo> list = HttpUitl.getHttUtil().getOnlineUserList();
+                    if (list != null && list.size() != 0)
+                        UserListController.getController().refeshUserList(list);
+
+                });
+            }
+        }).start();
+
     }
 
     @Override
     public void receivCall(Message message) {
-        EncryptText body = (EncryptText)message.getBody().getData();
+        EncryptText body = (EncryptText) message.getBody().getData();
         ShowMessage showMessage = new ShowMessage();
         showMessage.setUserName(body.getUserName());
         showMessage.setSenderId(message.getHeader().getFrom());
         showMessage.setContent(body.getContent());
         showMessage.setSessionId(body.getSessionId());
-        MessageCache.getMessageCache().addMeesage(body.getSessionId(),showMessage);
+        MessageCache.getMessageCache().addMeesage(body.getSessionId(), showMessage);
     }
 
     @Override
     public void buildChannelCall(UserInfo userInfo) {
-        Platform.runLater(()->ChatListController.getController().addChatUser(userInfo));
+        Platform.runLater(() -> ChatListController.getController().addChatUser(userInfo));
     }
 
 }

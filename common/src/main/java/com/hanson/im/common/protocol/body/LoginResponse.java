@@ -11,49 +11,50 @@ import io.netty.buffer.ByteBuf;
  * @Date 2019/1/12
  * @Description:
  */
-public class ServerResponse implements HimSerializer {
+public class LoginResponse implements HimSerializer {
 
     /**
      * the response content
      */
-    private String content;
+    private UserInfo userInfo;
 
     /**
      * the status code
      */
     private int code;
 
-    public ServerResponse(){
+    public LoginResponse(){
 
     }
 
-    public ServerResponse(int code, String content){
+    public LoginResponse(int code, UserInfo userInfo){
         this.code = code;
-        this.content = content;
+        this.userInfo = userInfo;
     }
 
-    public String getContent() {
-        return content;
+    public UserInfo getUserInfo() {
+        return userInfo;
     }
 
     public int getCode(){
         return code;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 
 
     @Override
     public void writeTo(ByteBuf byteBuffer)  {
         byteBuffer.writeInt(code);
-        WriterUtil.writeString(content,byteBuffer);
+       userInfo.writeTo(byteBuffer);
     }
 
     @Override
-    public void readFrom(ByteBuf byteBuffer) throws DecodeException {
+    public void readFrom(ByteBuf byteBuffer) {
         code = byteBuffer.readInt();
-        content = WriterUtil.readString(byteBuffer);
+        userInfo = new UserInfo();
+        userInfo.readFrom(byteBuffer);
     }
 }

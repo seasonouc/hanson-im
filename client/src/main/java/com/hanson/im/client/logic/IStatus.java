@@ -19,7 +19,7 @@ public interface IStatus {
 
     void buildChannel(UserInfo userInfo);
 
-    void loginBack(boolean result,int code);
+    void loginBack(boolean result,int code,UserInfo userInfo);
 
     void disconnect();
 

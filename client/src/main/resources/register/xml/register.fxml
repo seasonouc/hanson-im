@@ -14,6 +14,7 @@
             <PasswordField fx:id="password" layoutX="144.0" layoutY="112.0" />
             <Label layoutX="77.0" layoutY="116.0" text="password" />
             <TextField fx:id="userId" accessibleRole="PASSWORD_FIELD" layoutX="144.0" layoutY="73.0" />
+            <Label fx:id="registerTip" layoutX="168.0" layoutY="147.0" text="account register" />
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
          <children>

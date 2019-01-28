@@ -101,10 +101,13 @@ public class HttpUitl {
         try {
             String res = post(registString,"/v1//registerUser");
             ResponseVO responseVO = JSONObject.parseObject(res,ResponseVO.class);
+            if(responseVO.getCode() == 200){
+                return true;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-        return true;
+        return false;
     }
 }
