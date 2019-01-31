@@ -43,9 +43,15 @@ For example,if we have a group of three people,we can exchange the key like this
 
 So in such way can get the final  encryption key.
 
+We suppose there are n (n>=2) people,they should exchange the encrypt key n times 
+
+so that they can get the final key.
+
 Base on the theory,we can build a group chat privately ,and meanwhile ,
 the most of the data are store in the client storage.
 So it dosen't  matter that if the sever was attacked.In someway,it is decentralized.
+
+
 
 
 
